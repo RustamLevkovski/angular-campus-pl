@@ -1,0 +1,59 @@
+<div class="section-view">
+  <div class="grid gap-4 ">
+    @if (sections.length) {
+      @for (section of sections; track section.id) {
+        <mat-card class="p-4 mb-4" [id]="'section-' + section.id">
+          <!-- view mode -->
+          @if (editingSectionId !== section.id) {
+            <mat-card-header class="flex justify-between items-center w-full">
+              <mat-card-title>{{ section.title }}</mat-card-title>
+              <div class="actions">
+                <button mat-button color="primary" (click)="startEdit(section)">Edit</button>
+                <button mat-button color="warn" (click)="deleteSection(section.id)">Remove</button>
+              </div>
+            </mat-card-header>
+            <mat-card-content class="mt-4 flex flex-col gap-4">
+              @if (parseContent(section.content); as blocks) {
+                @for (block of blocks; track $index) {
+                  @if (block.type === 'title') {
+                    <h3 [class.font-bold]="block.isBold" [class.text-xl]="block.isBold" [class.text-lg]="!block.isBold">{{ block.titleText }}</h3>
+                  }
+                  @if (block.type === 'text') {
+                    <p class="whitespace-pre-wrap">{{ block.textContent }}</p>
+                  }
+                  @if (block.type === 'ordered-list') {
+                    <ol class="list-decimal list-inside pl-4">
+                      @for (item of block.listItems; track $index) {
+                        <li>{{ item }}</li>
+                      }
+                    </ol>
+                  }
+                  @if (block.type === 'unordered-list') {
+                    <ul class="list-disc list-inside pl-4">
+                      @for (item of block.listItems; track $index) {
+                        <li>{{ item }}</li>
+                      }
+                    </ul>
+                  }
+                }
+              } @else {
+                <p class="whitespace-pre-wrap">{{ section.content }}</p>
+              }
+            </mat-card-content>
+          }
+
+          <!-- edit mode -->
+          @if (editingSectionId === section.id) {
+            <app-edit-section-form
+              [section]="section"
+              (save)="saveEdit(section, section.pageName || 'angular', $event)"
+              (cancel)="cancelEdit()"
+            ></app-edit-section-form>
+          }
+        </mat-card>
+      }
+    } @else {
+      <p>No content yet.</p>
+    }
+  </div>
+</div>

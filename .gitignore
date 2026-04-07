@@ -5,11 +5,13 @@
 /tmp
 /out-tsc
 /bazel-out
+/test-report
 
 # Node
 /node_modules
 npm-debug.log
 yarn-error.log
+package-lock.json
 
 # IDEs and editors
 .idea/
@@ -19,6 +21,10 @@ yarn-error.log
 *.launch
 .settings/
 *.sublime-workspace
+test_output.txt
+test2.txt
+out.txt
+vitest_error.log
 
 # Visual Studio Code
 .vscode/*

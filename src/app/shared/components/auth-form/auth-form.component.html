@@ -1,0 +1,65 @@
+<mat-card class="auth-card">
+  <h2 class="auth-title">{{ title }}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" />
+      @if (form.get('email')?.hasError('required')) {
+        <mat-error>Email is required</mat-error>
+      }
+      @if (form.get('email')?.hasError('email')) {
+        <mat-error>Enter a valid email</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Password</mat-label>
+      <input matInput type="password" formControlName="password" />
+      @if (form.get('password')?.hasError('required')) {
+        <mat-error>Password is required</mat-error>
+      }
+      @if (form.get('password')?.hasError('minlength')) {
+        <mat-error>
+          Password must be at least 6 characters
+        </mat-error>
+      }
+    </mat-form-field>
+
+    @if (mode === 'register') {
+      <mat-form-field
+        appearance="outline"
+        class="w-full"
+      >
+        <mat-label>Confirm password</mat-label>
+        <input matInput type="password" formControlName="confirmPassword" />
+      </mat-form-field>
+    }
+
+    @if (error) {
+      <div class="error-text">
+        {{ error }}
+      </div>
+    }
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="loading">
+      @if (!loading) {
+        {{ mode === 'login' ? 'Login' : 'Sign up' }}
+      } @else {
+        <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner>
+      }
+    </button>
+  </form>
+
+  <div class="auth-footer">
+    @if (mode === 'login') {
+      <span>Don’t have an account?</span>
+      <a routerLink="/auth/register">Sign up</a>
+      <p>admin@devhub.com</p>
+      <p>password</p>
+    } @else {
+      <span>Already have an account?</span>
+      <a routerLink="/auth/login">Login</a>
+    }
+  </div>
+</mat-card>

@@ -1,0 +1,24 @@
+.top-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--mat-sys-primary, #1976d2);
+  color: var(--mat-sys-on-primary, #fff);
+}
+
+.top-navbar__title {
+  font-weight: 600;
+}
+
+.top-navbar__nav a {
+  margin-left: 1rem;
+  color: inherit;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.top-navbar__nav a.active {
+  text-decoration: underline;
+}
+

@@ -1,0 +1,14 @@
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top left, #e3f2fd, #bbdefb);
+}
+
+.auth-layout__content {
+  width: 100%;
+  max-width: 480px;
+  padding: 2rem;
+}
+

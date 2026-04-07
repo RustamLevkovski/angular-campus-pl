@@ -1,0 +1,18 @@
+<section class="content-page-wrapper">
+  <h1>Angular Campus: Angular</h1>
+  <p>
+    Explore key Angular concepts. Use the menu on the left to jump between sections,
+    or add your own learning notes below.
+  </p>
+
+  <button mat-raised-button color="primary" type="button" class="mb-4" (click)="showForm = !showForm">
+    {{ showForm ? 'Cancel' : 'Add new section' }}
+  </button>
+
+  @if (showForm) {
+    <app-dynamic-section-form (sectionCreated)="onSectionCreated($event)">
+    </app-dynamic-section-form>
+  }
+
+  <app-section-view [sections]="(sections$ | async) ?? []"></app-section-view>
+</section>
