@@ -1,18 +1,19 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { selectAuthError, selectAuthLoading } from '../store/auth/auth.selectors';
+// Lesson 5. (NgRx disabled) import { Store } from '@ngrx/store';
+import { Observable, of } from 'rxjs';
+// Lesson 5. (NgRx disabled) import { selectAuthError, selectAuthLoading } from '../store/auth/auth.selectors';
 
 @Injectable({ providedIn: 'root' })
 export class StoreService {
-  constructor(private store: Store) {}
+  // Lesson 5. (NgRx disabled) constructor(private store: Store) {}
 
   selectAuthLoading(): Observable<boolean> {
-    return this.store.select(selectAuthLoading);
+    // Lesson 5. (NgRx disabled) return this.store.select(selectAuthLoading);
+    return of(false);
   }
 
   selectAuthError(): Observable<unknown> {
-    return this.store.select(selectAuthError);
+    // Lesson 5. (NgRx disabled) return this.store.select(selectAuthError);
+    return of(null);
   }
 }
-
