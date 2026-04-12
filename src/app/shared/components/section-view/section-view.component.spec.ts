@@ -49,6 +49,32 @@ describe('SectionViewComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('C2');
   });
 
+  it('starts edit mode only for the targeted section', () => {
+    const fixture = TestBed.createComponent(SectionViewComponent);
+    fixture.componentInstance.sections = [
+      { id: 1, title: 'T1', content: 'C1' },
+      { id: 2, title: 'T2', content: 'C2' }
+    ];
+    fixture.detectChanges();
+
+    // Click edit on first section
+    fixture.componentInstance.startEdit(0);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.editingIndex).toBe(0);
+    
+    let editForms = fixture.nativeElement.querySelectorAll('app-edit-section-form');
+    expect(editForms.length).toBe(1);
+    
+    // Switch edit to second section
+    fixture.componentInstance.startEdit(1);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.editingIndex).toBe(1);
+    editForms = fixture.nativeElement.querySelectorAll('app-edit-section-form');
+    expect(editForms.length).toBe(1); // Still only one
+  });
+
   it('starts edit mode for a section', () => {
     const fixture = TestBed.createComponent(SectionViewComponent);
     fixture.componentInstance.sections = [{ id: 1, title: 'T1', content: 'C1' }];
@@ -59,7 +85,7 @@ describe('SectionViewComponent', () => {
     editBtn.click();
     fixture.detectChanges();
 
-    expect(fixture.componentInstance.editingSectionId).toBe(1);
+    expect(fixture.componentInstance.editingIndex).toBe(0);
     const editForm = fixture.nativeElement.querySelector('app-edit-section-form');
     expect(editForm).toBeTruthy();
   });
@@ -69,7 +95,7 @@ describe('SectionViewComponent', () => {
     fixture.componentInstance.sections = [{ id: 1, title: 'T1', content: 'C1' }];
     fixture.detectChanges();
 
-    fixture.componentInstance.startEdit(fixture.componentInstance.sections[0]!);
+    fixture.componentInstance.startEdit(0);
     fixture.detectChanges();
 
     const buttons = fixture.nativeElement.querySelectorAll('button');
@@ -77,7 +103,7 @@ describe('SectionViewComponent', () => {
     cancelBtn.click();
     fixture.detectChanges();
 
-    expect(fixture.componentInstance.editingSectionId).toBeNull();
+    expect(fixture.componentInstance.editingIndex).toBeNull();
   });
 
   it('saves edit and calls SectionsService updateSection', () => {
@@ -85,7 +111,7 @@ describe('SectionViewComponent', () => {
     fixture.componentInstance.sections = [{ id: 1, title: 'T1', content: 'C1', pageName: 'angular' }];
     fixture.detectChanges();
 
-    fixture.componentInstance.startEdit(fixture.componentInstance.sections[0]!);
+    fixture.componentInstance.startEdit(0);
     fixture.componentInstance.saveEdit(
       fixture.componentInstance.sections[0]!, 
       'angular', 
@@ -95,7 +121,7 @@ describe('SectionViewComponent', () => {
     expect(mockSectionsService.updateSection).toHaveBeenCalledWith(
       expect.objectContaining({ id: 1, title: 'New T1', content: 'C1', pageName: 'angular' })
     );
-    expect(fixture.componentInstance.editingSectionId).toBeNull();
+    expect(fixture.componentInstance.editingIndex).toBeNull();
   });
 
   it('removes section and calls SectionsService removeSection', () => {

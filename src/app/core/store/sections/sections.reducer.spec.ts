@@ -22,13 +22,15 @@ describe('sectionsReducer', () => {
     expect(next.sections).toEqual([s1, s2]);
   });
 
-  it('updates an existing section', () => {
-    const s1 = { id: 1, pageName: 'p', title: 't', content: 'c' };
-    const s2 = { id: 2, pageName: 'p', title: 't2', content: 'c2' };
+  it('updates an existing section (strict match by id and pageName)', () => {
+    const s1 = { id: 1, pageName: 'p1', title: 't1', content: 'c1' };
+    const s2 = { id: 1, pageName: 'p2', title: 't2', content: 'c2' }; // Colliding ID on different page
     const state = { sections: [s1, s2] };
-    const updatedS1 = { ...s1, title: 't_updated', content: 'c_updated' };
+    const updatedS1 = { ...s1, title: 't1_updated' };
     const next = sectionsReducer(state as any, updateSection({ section: updatedS1 }));
-    expect(next.sections).toEqual([updatedS1, s2]);
+    
+    expect(next.sections[0]).toEqual(updatedS1);
+    expect(next.sections[1]).toEqual(s2); // s2 should remain unchanged despite ID collision
   });
 
   it('removes a section by id', () => {

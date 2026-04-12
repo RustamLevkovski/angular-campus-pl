@@ -22,18 +22,18 @@ import { EditSectionFormComponent } from '../edit-section-form/edit-section-form
 export class SectionViewComponent {
   @Input() sections: Section[] = [];
 
-  editingSectionId: number | null = null;
+  editingIndex: number | null = null;
   
   private sectionsService = inject(SectionsService);
   private cdr = inject(ChangeDetectorRef);
 
-  startEdit(section: Section): void {
-    this.editingSectionId = section.id;
+  startEdit(index: number): void {
+    this.editingIndex = index;
     this.cdr.detectChanges();
   }
 
   cancelEdit(): void {
-    this.editingSectionId = null;
+    this.editingIndex = null;
     this.cdr.detectChanges();
   }
 
@@ -45,7 +45,7 @@ export class SectionViewComponent {
       content: event.content
     };
     this.sectionsService.updateSection(updatedSection as any);
-    this.editingSectionId = null;
+    this.editingIndex = null;
     this.cdr.detectChanges();
   }
 

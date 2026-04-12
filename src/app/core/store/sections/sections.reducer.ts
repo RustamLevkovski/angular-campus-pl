@@ -14,11 +14,18 @@ export const sectionsReducer = createReducer(
   on(loadSectionsFromStorage, (_state, { sections }) => ({
     sections: [...sections]
   })),
-  on(addSection, (state, { section }) => ({
-    sections: [...state.sections, section]
-  })),
+  on(addSection, (state, { section }) => {
+    const exists = state.sections.some(s => s.id === section.id);
+    if (exists) {
+      return state;
+    }
+    return {
+      ...state,
+      sections: [...state.sections, section]
+    };
+  }),
   on(updateSection, (state, { section }) => ({
-    sections: state.sections.map(s => s.id === section.id ? section : s)
+    sections: state.sections.map(s => (s.id === section.id && s.pageName === section.pageName) ? section : s)
   })),
   on(removeSection, (state, { id }) => ({
     sections: state.sections.filter(s => s.id !== id)

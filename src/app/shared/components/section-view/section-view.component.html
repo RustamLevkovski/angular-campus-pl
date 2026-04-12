@@ -4,11 +4,11 @@
       @for (section of sections; track section.id) {
         <mat-card class="p-4 mb-4" [id]="'section-' + section.id">
           <!-- view mode -->
-          @if (editingSectionId !== section.id) {
+          @if (editingIndex !== $index) {
             <mat-card-header class="flex justify-between items-center w-full">
               <mat-card-title>{{ section.title }}</mat-card-title>
               <div class="actions">
-                <button mat-button color="primary" (click)="startEdit(section)">Edit</button>
+                <button mat-button color="primary" (click)="startEdit($index)">Edit</button>
                 <button mat-button color="warn" (click)="deleteSection(section.id)">Remove</button>
               </div>
             </mat-card-header>
@@ -43,7 +43,7 @@
           }
 
           <!-- edit mode -->
-          @if (editingSectionId === section.id) {
+          @if (editingIndex === $index) {
             <app-edit-section-form
               [section]="section"
               (save)="saveEdit(section, section.pageName || 'angular', $event)"

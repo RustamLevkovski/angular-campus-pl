@@ -5,7 +5,7 @@ import { addSection, updateSection, removeSection } from '../store/sections/sect
 import { SectionsService } from './sections.service';
 
 describe('SectionsService', () => {
-  it('addSection dispatches addSection action', () => {
+  it('addSection dispatches addSection action with unique ids', () => {
     const store = {
       dispatch: vi.fn(),
       select: vi.fn(),
@@ -17,11 +17,21 @@ describe('SectionsService', () => {
 
     const service = TestBed.inject(SectionsService);
     vi.spyOn(Date, 'now').mockReturnValue(123);
+    vi.spyOn(Math, 'random').mockReturnValue(0.456); // result: 456
 
-    service.addSection('angular', 'Title', 'Content');
+    service.addSection('angular', 'Title 1', 'Content 1');
+    service.addSection('angular', 'Title 2', 'Content 2');
 
-    expect(store.dispatch).toHaveBeenCalledWith(
-      addSection({ section: { id: 123, pageName: 'angular', title: 'Title', content: 'Content' } })
+    expect(store.dispatch).toHaveBeenCalledTimes(2);
+    
+    // ID = "123" + "456" = 123456
+    expect(store.dispatch).toHaveBeenNthCalledWith(1, 
+      addSection({ section: expect.objectContaining({ id: 123456, title: 'Title 1' }) })
+    );
+
+    // Second call with same mock should have ID 123457 (because 123456 <= 123456, so lastId + 1)
+    expect(store.dispatch).toHaveBeenNthCalledWith(2, 
+      addSection({ section: expect.objectContaining({ id: 123457, title: 'Title 2' }) })
     );
   });
 
@@ -98,6 +108,47 @@ describe('SectionsService', () => {
     service.ensureInitialSections('angular', [{ title: 'A', content: 'a' }]);
 
     expect(store.dispatch).not.toHaveBeenCalled();
+  });
+  it('ensureInitialSections avoids duplicate calls for the same page session', () => {
+    const store = {
+      dispatch: vi.fn(),
+      select: vi.fn().mockReturnValue(of([])),
+    };
+
+    TestBed.configureTestingModule({
+      providers: [SectionsService, { provide: Store, useValue: store }],
+    });
+
+    const service = TestBed.inject(SectionsService);
+    
+    // Call twice
+    service.ensureInitialSections('angular', [{ title: 'A', content: 'a' }]);
+    service.ensureInitialSections('angular', [{ title: 'A', content: 'a' }]);
+
+    expect(store.dispatch).toHaveBeenCalledTimes(1);
+  });
+
+  it('ensureInitialSections avoids adding sections that already exist (by title)', () => {
+    const store = {
+      dispatch: vi.fn(),
+      select: vi.fn().mockReturnValue(of([{ id: 1, pageName: 'angular', title: 'Existing', content: 'c' }])),
+    };
+
+    TestBed.configureTestingModule({
+      providers: [SectionsService, { provide: Store, useValue: store }],
+    });
+
+    const service = TestBed.inject(SectionsService);
+    
+    service.ensureInitialSections('angular', [
+      { title: 'Existing', content: 'new content' }, // Should be skipped
+      { title: 'New', content: 'new content' }      // Should be added
+    ]);
+
+    expect(store.dispatch).toHaveBeenCalledTimes(1);
+    expect(store.dispatch).toHaveBeenCalledWith(
+      addSection({ section: expect.objectContaining({ title: 'New' }) })
+    );
   });
 });
 
