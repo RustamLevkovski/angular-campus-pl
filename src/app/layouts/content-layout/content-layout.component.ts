@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { Subject, Observable } from 'rxjs';
-import { filter, startWith, takeUntil } from 'rxjs/operators';
+// Lesson 4 Disable Services and Routes. import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { Subject } from 'rxjs';
 
 import { TopNavbarComponent } from '../../shared/components/top-navbar/top-navbar.component';
 import { LeftSideMenuComponent } from '../../shared/components/left-side-menu/left-side-menu.component';
@@ -9,7 +8,7 @@ import { LeftSideMenuComponent } from '../../shared/components/left-side-menu/le
 @Component({
   selector: 'app-content-layout',
   standalone: true,
-  imports: [TopNavbarComponent, LeftSideMenuComponent, RouterOutlet],
+  imports: [TopNavbarComponent, LeftSideMenuComponent],
   templateUrl: './content-layout.component.html',
   styleUrls: ['./content-layout.component.scss']
 })

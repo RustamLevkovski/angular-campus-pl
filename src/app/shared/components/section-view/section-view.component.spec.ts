@@ -106,7 +106,7 @@ describe('SectionViewComponent', () => {
     expect(fixture.componentInstance.editingIndex).toBeNull();
   });
 
-  it('saves edit and calls SectionsService updateSection', () => {
+  it.skip('Lesson 4 Disable Services and Routes. saves edit and calls SectionsService updateSection', () => {
     const fixture = TestBed.createComponent(SectionViewComponent);
     fixture.componentInstance.sections = [{ id: 1, title: 'T1', content: 'C1', pageName: 'angular' }];
     fixture.detectChanges();
@@ -118,13 +118,13 @@ describe('SectionViewComponent', () => {
       { title: 'New T1', content: 'C1' }
     );
 
-    expect(mockSectionsService.updateSection).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 1, title: 'New T1', content: 'C1', pageName: 'angular' })
-    );
-    expect(fixture.componentInstance.editingIndex).toBeNull();
+    // Lesson 4 Disable Services and Routes. expect(mockSectionsService.updateSection).toHaveBeenCalledWith(
+    // Lesson 4 Disable Services and Routes.   expect.objectContaining({ id: 1, title: 'New T1', content: 'C1', pageName: 'angular' })
+    // Lesson 4 Disable Services and Routes. );
+    // Lesson 4 Disable Services and Routes. expect(fixture.componentInstance.editingIndex).toBeNull();
   });
 
-  it('removes section and calls SectionsService removeSection', () => {
+  it.skip('Lesson 4 Disable Services and Routes. removes section and calls SectionsService removeSection', () => {
     const fixture = TestBed.createComponent(SectionViewComponent);
     fixture.componentInstance.sections = [{ id: 1, title: 'T1', content: 'C1', pageName: 'Pg' }];
     fixture.detectChanges();
@@ -133,7 +133,7 @@ describe('SectionViewComponent', () => {
     const rmBtn = Array.from(buttons).find((b: any) => b.textContent?.includes('Remove')) as HTMLButtonElement;
     rmBtn.click();
 
-    expect(mockSectionsService.removeSection).toHaveBeenCalledWith(1);
+    // Lesson 4 Disable Services and Routes. expect(mockSectionsService.removeSection).toHaveBeenCalledWith(1);
   });
 
   describe('parseContent', () => {

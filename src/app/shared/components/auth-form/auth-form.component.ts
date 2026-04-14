@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+// Lesson 4 Disable Services and Routes. import { Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -15,7 +15,7 @@ import { AuthService } from '../../../core/services/auth.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
+    // Lesson 4 Disable Services and Routes. RouterLink,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -31,7 +31,7 @@ export class AuthFormComponent {
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
-  private router = inject(Router);
+  // Lesson 4 Disable Services and Routes. private router = inject(Router);
 
   loading = false;
   error: string | null = null;
@@ -69,7 +69,7 @@ export class AuthFormComponent {
         next: () => {
           this.loading = false;
           this.submitted.emit({ email: emailValue, password: passwordValue, mode: this.mode });
-          this.router.navigate(['/angular']);
+          // Lesson 4 Disable Services and Routes. this.router.navigate(['/angular']);
         },
         error: (err: Error) => {
           this.loading = false;
@@ -80,7 +80,7 @@ export class AuthFormComponent {
       localStorage.setItem('angularCampus.user', JSON.stringify({ email: emailValue, password: passwordValue }));
       this.loading = false;
       this.submitted.emit({ email: emailValue, password: passwordValue, mode: this.mode });
-      this.router.navigate(['/auth/login']);
+      // Lesson 4 Disable Services and Routes. this.router.navigate(['/auth/login']);
     }
   }
 }

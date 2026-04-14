@@ -14,7 +14,7 @@ import { provideHttpClient } from '@angular/common/http';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
+    // Lesson 4 Disable Services and Routes. provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
     provideAnimationsAsync(), // Required for Material
     provideHttpClient(),
     // Lesson 5. (NgRx disabled) provideStore({ auth: authReducer, sections: sectionsReducer }),

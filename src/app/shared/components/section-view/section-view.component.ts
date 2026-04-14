@@ -24,7 +24,7 @@ export class SectionViewComponent {
 
   editingIndex: number | null = null;
   
-  private sectionsService = inject(SectionsService);
+  // Lesson 4 Disable Services and Routes. private sectionsService = inject(SectionsService);
   private cdr = inject(ChangeDetectorRef);
 
   startEdit(index: number): void {
@@ -44,13 +44,13 @@ export class SectionViewComponent {
       title: event.title,
       content: event.content
     };
-    this.sectionsService.updateSection(updatedSection as any);
+    // Lesson 4 Disable Services and Routes. this.sectionsService.updateSection(updatedSection as any);
     this.editingIndex = null;
     this.cdr.detectChanges();
   }
 
   deleteSection(id: number): void {
-    this.sectionsService.removeSection(id);
+    // Lesson 4 Disable Services and Routes. this.sectionsService.removeSection(id);
   }
 
   parseContent(content: string): SectionBlock[] | null {

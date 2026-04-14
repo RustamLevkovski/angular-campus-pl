@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { DynamicSectionFormComponent } from '../../shared/components/dynamic-section-form/dynamic-section-form.component';
 import { SectionViewComponent } from '../../shared/components/section-view/section-view.component';
 import { Section } from '../../models/section.model';
@@ -16,30 +16,31 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrls: ['./js-page.component.scss']
 })
 export class JsPageComponent implements OnInit {
-  private menuService = inject(MenuService);
-  private sectionsService = inject(SectionsService);
+  // Lesson 4 Disable Services and Routes. private menuService = inject(MenuService);
+  // Lesson 4 Disable Services and Routes. private sectionsService = inject(SectionsService);
 
   sections$!: Observable<Section[]>;
   showForm = false;
 
   ngOnInit(): void {
     const pageName = 'javascript';
-    this.menuService.setCurrentPage(pageName);
-    this.sectionsService.ensureInitialSections(pageName, [
-      {
-        title: 'ES6+ Features',
-        content: 'Let, const, arrow functions, classes, and modules.'
-      },
-      {
-        title: 'Asynchronous JS',
-        content: 'Callbacks, Promises, async/await, and event loop basics.'
-      }
-    ]);
-    this.sections$ = this.sectionsService.getSectionsForPage(pageName);
+    // Lesson 4 Disable Services and Routes. this.menuService.setCurrentPage(pageName);
+    // Lesson 4 Disable Services and Routes. this.sectionsService.ensureInitialSections(pageName, [
+    // Lesson 4 Disable Services and Routes.   {
+    // Lesson 4 Disable Services and Routes.     title: 'ES6+ Features',
+    // Lesson 4 Disable Services and Routes.     content: 'Let, const, arrow functions, classes, and modules.'
+    // Lesson 4 Disable Services and Routes.   },
+    // Lesson 4 Disable Services and Routes.   {
+    // Lesson 4 Disable Services and Routes.     title: 'Asynchronous JS',
+    // Lesson 4 Disable Services and Routes.     content: 'Callbacks, Promises, async/await, and event loop basics.'
+    // Lesson 4 Disable Services and Routes.   }
+    // Lesson 4 Disable Services and Routes. ]);
+    // Lesson 4 Disable Services and Routes. this.sections$ = this.sectionsService.getSectionsForPage(pageName);
+    this.sections$ = of([]);
   }
 
   onSectionCreated(event: { title: string; content: string }): void {
-    this.sectionsService.addSection('javascript', event.title, event.content);
+    // Lesson 4 Disable Services and Routes. this.sectionsService.addSection('javascript', event.title, event.content);
     this.showForm = false;
   }
 }

@@ -15,19 +15,20 @@ export class MenuService {
   constructor(private sectionsService: SectionsService) {}
 
   readonly sections$: Observable<SectionNavItem[]> = this.currentPageName$.pipe(
-    switchMap((pageName) =>
-      pageName ? this.sectionsService.getSectionsForPage(pageName) : of([])
-    ),
-    map((sections) =>
-      sections.map((s) => ({
-        label: s.title,
-        anchor: `#section-${s.id}`
-      }))
-    )
+    // Lesson 4 Disable Services and Routes. switchMap((pageName) =>
+    // Lesson 4 Disable Services and Routes.   pageName ? this.sectionsService.getSectionsForPage(pageName) : of([])
+    // Lesson 4 Disable Services and Routes. ),
+    // Lesson 4 Disable Services and Routes. map((sections) =>
+    // Lesson 4 Disable Services and Routes.   sections.map((s) => ({
+    // Lesson 4 Disable Services and Routes.     label: s.title,
+    // Lesson 4 Disable Services and Routes.     anchor: `#section-${s.id}`
+    // Lesson 4 Disable Services and Routes.   }))
+    // Lesson 4 Disable Services and Routes. )
+    switchMap(() => of([]))
   );
 
   setCurrentPage(pageName: string): void {
-    this.currentPageName$.next(pageName);
+    // Lesson 4 Disable Services and Routes. this.currentPageName$.next(pageName);
   }
 }
 

@@ -6,10 +6,11 @@ export class FormsService {
   constructor(private fb: FormBuilder) {}
 
   buildLoginForm(): FormGroup {
-    return this.fb.nonNullable.group({
-      email: [''],
-      password: ['']
-    });
+    // Lesson 4 Disable Services and Routes. return this.fb.nonNullable.group({
+    // Lesson 4 Disable Services and Routes.   email: [''],
+    // Lesson 4 Disable Services and Routes.   password: ['']
+    // Lesson 4 Disable Services and Routes. });
+    return this.fb.group({});
   }
 }
 
