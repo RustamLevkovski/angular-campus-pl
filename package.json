@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:coverage": "ng test --watch=false --coverage"
+    "test:coverage": "ng test --watch=false --coverage",
+    "analyze": "ng build --configuration development && source-map-explorer dist/angular_campus/browser/**/*.js --no-border-checks"
   },
   "prettier": {
     "printWidth": 100,
@@ -52,6 +53,7 @@
     "@vitest/ui": "^4.0.18",
     "jsdom": "^27.1.0",
     "karma-html-reporter": "^0.2.7",
+    "source-map-explorer": "^2.5.3",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
   }
