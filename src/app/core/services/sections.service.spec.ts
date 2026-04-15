@@ -97,7 +97,7 @@ describe('SectionsService', () => {
   it('ensureInitialSections does not seed when already present', () => {
     const store = {
       dispatch: vi.fn(),
-      select: vi.fn().mockReturnValue(of([{ id: 1, pageName: 'angular', title: 'T', content: 'C' }])),
+      select: vi.fn().mockReturnValue(of([{ id: 1, pageName: 'angular', title: 'A', content: 'a' }])),
     };
 
     TestBed.configureTestingModule({
