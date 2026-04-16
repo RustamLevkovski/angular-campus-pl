@@ -4,15 +4,17 @@
     Explore key Angular concepts. Use the menu on the left to jump between sections,
     or add your own learning notes below.
   </p>
+  <!-- Add click handler to toggle showForm -->
+  <button mat-raised-button color="primary" type="button" class="mb-4">
+    <!-- Depends on showForm value change button text: Add new section or Cancel -->
 
-  <button mat-raised-button color="primary" type="button" class="mb-4" (click)="showForm = !showForm">
-    {{ showForm ? 'Cancel' : 'Add new section' }}
   </button>
 
-  @if (showForm) {
-  <app-dynamic-section-form (sectionCreated)="onSectionCreated($event)">
-  </app-dynamic-section-form>
-  }
+  <!-- Use if block and depends on showForm value - show/hide the app-dynamic-section-form component -->
+  <!-- In the app-dynamic-section-form component, add a event handler - onSectionCreated to handle the sectionCreated event -->
 
-  <app-section-view [sections]="sections" (update)="updateSection($event)" (remove)="removeSection($event)"></app-section-view>
+  <!-- In the app-section-view component, add a event handler - update to handle the update event and remove to handle the remove event 
+for update - updateSection, for remove - removeSection 
+-->
+  <app-section-view [sections]="sections"></app-section-view>
 </section>

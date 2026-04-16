@@ -1,75 +1,90 @@
-<form [formGroup]="form" (ngSubmit)="submit(formDirective)" #formDirective="ngForm"
-  class="dynamic-section-form flex flex-col gap-4">
+<!-- 1. Bind [formGroup] to the form property, bind (ngSubmit) to submit(formDirective), add local ref #formDirective="ngForm" -->
+<form class="dynamic-section-form flex flex-col gap-4">
   <h3>Add New Section</h3>
+
+  <!-- 2. Bind the title input with formControlName="title" -->
   <mat-form-field class="w-full">
     <mat-label>Section Title</mat-label>
-    <input matInput formControlName="title" />
+    <input matInput />
   </mat-form-field>
 
-  <div class="blocks-container flex flex-col gap-4" formArrayName="contentBlocks">
-    @for (block of contentBlocks.controls; track block; let blockIndex = $index) {
-    <mat-card class="block-card p-4 relative" [formGroupName]="blockIndex">
-      <button mat-icon-button color="warn" class="absolute top-2 right-2" type="button"
-        (click)="removeBlock(blockIndex)">
-        <mat-icon>delete</mat-icon>
-      </button>
+  <!-- 3. Bind the wrapper div with formArrayName="contentBlocks" -->
+  <div class="blocks-container flex flex-col gap-4">
 
-      <div class="block-content mt-6">
-        @if (block.get('type')?.value === 'title') {
-        <div class="flex flex-col gap-2">
-          <mat-checkbox formControlName="isBold">Bold Title</mat-checkbox>
-          <mat-form-field class="w-full">
-            <mat-label>Title Text</mat-label>
-            <input matInput formControlName="titleText" />
-          </mat-form-field>
-        </div>
-        }
+    <!-- 4. Use @for to iterate over contentBlocks.controls, track by block, expose blockIndex via let blockIndex = $index -->
+    <!-- 5. Bind [formGroupName] to blockIndex on the mat-card -->
 
-        @if (block.get('type')?.value === 'text') {
-        <mat-form-field class="w-full">
-          <mat-label>Text Content</mat-label>
-          <textarea matInput rows="4" formControlName="textContent"></textarea>
+    <!-- 6. Add a delete button (mat-icon-button, color="warn") that calls removeBlock(blockIndex) -->
+
+    <!-- 7. Inside div.block-content, use @if blocks to conditionally render each block type: -->
+
+    <!-- 7a. If block type is 'title': render mat-checkbox (formControlName="isBold") and mat-form-field (formControlName="titleText") -->
+
+    <div class="flex flex-col gap-2">
+      <mat-checkbox formControlName="isBold">Bold Title</mat-checkbox>
+      <mat-form-field class="w-full">
+        <mat-label>Title Text</mat-label>
+        <input matInput formControlName="titleText" />
+      </mat-form-field>
+    </div>
+
+    <!-- 7b. If block type is 'text': render a textarea mat-form-field (formControlName="textContent") -->
+
+    <mat-form-field class="w-full">
+      <mat-label>Text Content</mat-label>
+      <textarea matInput rows="4"></textarea>
+    </mat-form-field>
+
+    <!-- 7c. If block type is 'ordered-list' OR 'unordered-list':
+            render div with formArrayName="listItems"
+            use @for to iterate getListItems(blockIndex).controls (track item, expose itemIndex)
+            each item: mat-form-field bound with getFormControl(getListItems(blockIndex), itemIndex)
+                       + remove button calling removeListItem(getListItems(blockIndex), itemIndex)
+            after the loop: Add List Item button calling addListItem(getListItems(blockIndex)) -->
+
+    <!-- set formArrayName="listItems"     -->
+    <div class="list-container flex flex-col gap-2">
+      <!-- Add depends on block type - if value - 'ordered-list' - show 'Ordered List', if 'unordered-list' - show 'Unordered List' -->
+      <h4>{{ "" }}</h4>
+      <!-- Use for to iterate over getListItems(blockIndex).controls, track by item, expose itemIndex via let itemIndex = $index -->
+
+      <div class="flex gap-2 items-center">
+        <mat-form-field class="flex-grow">
+          <!-- Add logic for increase itemIndex by 1 -->
+          <mat-label>Item </mat-label>
+          <!-- Bind [formControl] to getFormControl(getListItems(blockIndex), itemIndex) -->
+          <input matInput />
         </mat-form-field>
-        }
+        <button mat-icon-button color="warn" type="button">
+          <!-- Add logic for removeListItem(getListItems(blockIndex), itemIndex) by click -->
 
-        @if (block.get('type')?.value === 'ordered-list' || block.get('type')?.value === 'unordered-list') {
-        <div class="list-container flex flex-col gap-2" formArrayName="listItems">
-          <h4>{{ block.get('type')?.value === 'ordered-list' ? 'Ordered List' : 'Unordered List' }}</h4>
-          @for (item of getListItems(blockIndex).controls; track item; let itemIndex = $index) {
-          <div class="flex gap-2 items-center">
-            <mat-form-field class="flex-grow">
-              <mat-label>Item {{ itemIndex + 1 }}</mat-label>
-              <input matInput [formControl]="getFormControl(getListItems(blockIndex), itemIndex)" />
-            </mat-form-field>
-            <button mat-icon-button color="warn" type="button"
-              (click)="removeListItem(getListItems(blockIndex), itemIndex)">
-              <mat-icon>remove_circle</mat-icon>
-            </button>
-          </div>
-          }
-          <button mat-button color="primary" type="button" (click)="addListItem(getListItems(blockIndex))">
-            <mat-icon>add</mat-icon> Add List Item
-          </button>
-        </div>
-        }
+          <mat-icon>remove_circle</mat-icon>
+        </button>
       </div>
-    </mat-card>
-    }
+
+      <!-- Add logic for addListItem(getListItems(blockIndex)) by click -->
+      <button mat-button color="primary" type="button">
+        <mat-icon>add</mat-icon> Add List Item
+      </button>
+    </div>
+
+
   </div>
 
+  <!-- 8. Add four mat-stroked-button buttons that call addBlock() with the correct block type argument:
+          - addBlock('title')          → Add Title
+          - addBlock('text')           → Add Text Segment
+          - addBlock('ordered-list')   → Add Ordered List
+          - addBlock('unordered-list') → Add Unordered List -->
   <div class="add-block-actions flex gap-2 flex-wrap mb-4">
-    <button mat-stroked-button type="button" (click)="addBlock('title')"><mat-icon>title</mat-icon> Add Title</button>
-    <button mat-stroked-button type="button" (click)="addBlock('text')"><mat-icon>notes</mat-icon> Add Text
-      Segment</button>
-    <button mat-stroked-button type="button"
-      (click)="addBlock('ordered-list')"><mat-icon>format_list_numbered</mat-icon> Add Ordered List</button>
-    <button mat-stroked-button type="button"
-      (click)="addBlock('unordered-list')"><mat-icon>format_list_bulleted</mat-icon> Add Unordered List</button>
+
   </div>
 
+  <!-- 9. Add a submit button (mat-raised-button, color="primary", type="submit")
+          Disable it when form.invalid using [disabled] binding
+          Label: Save Section -->
   <div class="actions">
-    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
-      Save Section
-    </button>
+
   </div>
+
 </form>

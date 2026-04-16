@@ -13,15 +13,5 @@ export class HoverElevationDirective {
   //use HostListener to listen to mouseleave events on the host element - call it onMouseLeave()
   //remove the mat-elevation-z8 class to the host element
 
-  private el = inject(ElementRef);
-  private renderer = inject(Renderer2);
-
-  @HostListener('mouseenter') onMouseEnter() {
-    this.renderer.addClass(this.el.nativeElement, 'mat-elevation-z8');
-  }
-
-  @HostListener('mouseleave') onMouseLeave() {
-    this.renderer.removeClass(this.el.nativeElement, 'mat-elevation-z8');
-  }
 
 }
