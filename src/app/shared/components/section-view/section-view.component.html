@@ -1,27 +1,52 @@
+<!--
+  HINTS / INSTRUCTIONS (SectionView template)
+
+  Goal: render a list of `sections` with a per-item toggle between:
+  - View mode (default): show title + rendered content blocks + Edit/Remove buttons
+  - Edit mode: show <app-edit-section-form> for that section
+
+  How edit mode works:
+  - `editingIndex` stores the index currently being edited (or null)
+  - Clicking "Edit" calls startEdit($index)
+  - Edit form emits:
+    - (save) -> saveEdit(section, section.pageName || 'angular', $event)
+    - (cancel) -> cancelEdit()
+
+  How content is rendered:
+  - `parseContent(section.content)` tries to parse JSON block arrays
+  - If blocks parse successfully, we render each block by `block.type`
+  - Otherwise we fall back to printing `section.content` as plain text
+-->
 <div class="section-view">
   <div class="grid gap-4 ">
     @if (sections.length) {
     @for (section of sections; track section.id) {
     <mat-card class="p-4 mb-4" [id]="'section-' + section.id">
-      <!-- view mode -->
+      <!-- View mode: only when this card is NOT currently being edited -->
       @if (editingIndex !== $index) {
       <mat-card-header class="flex justify-between items-center w-full">
         <mat-card-title>{{ section.title }}</mat-card-title>
         <div class="actions">
+          <!-- Edit: switches this card into edit mode -->
           <button mat-button color="primary" (click)="startEdit($index)">Edit</button>
+          <!-- Remove: asks parent to delete the section by id -->
           <button mat-button color="warn" (click)="deleteSection(section.id)">Remove</button>
         </div>
       </mat-card-header>
       <mat-card-content class="mt-4 flex flex-col gap-4">
+        <!-- Try to parse structured blocks; if null, show plain text content -->
         @if (parseContent(section.content); as blocks) {
         @for (block of blocks; track $index) {
+        <!-- TITLE block -->
         @if (block.type === 'title') {
         <h3 [class.font-bold]="block.isBold" [class.text-xl]="block.isBold" [class.text-lg]="!block.isBold">{{
           block.titleText }}</h3>
         }
+        <!-- TEXT block -->
         @if (block.type === 'text') {
         <p class="whitespace-pre-wrap">{{ block.textContent }}</p>
         }
+        <!-- ORDERED LIST block -->
         @if (block.type === 'ordered-list') {
         <ol class="list-decimal list-inside pl-4">
           @for (item of block.listItems; track $index) {
@@ -29,6 +54,7 @@
           }
         </ol>
         }
+        <!-- UNORDERED LIST block -->
         @if (block.type === 'unordered-list') {
         <ul class="list-disc list-inside pl-4">
           @for (item of block.listItems; track $index) {
@@ -38,12 +64,13 @@
         }
         }
         } @else {
+        <!-- Fallback: legacy / non-JSON content -->
         <p class="whitespace-pre-wrap">{{ section.content }}</p>
         }
       </mat-card-content>
       }
 
-      <!-- edit mode -->
+      <!-- Edit mode: only when `editingIndex` matches this card index -->
       @if (editingIndex === $index) {
       <app-edit-section-form [section]="section" (save)="saveEdit(section, section.pageName || 'angular', $event)"
         (cancel)="cancelEdit()"></app-edit-section-form>
@@ -51,6 +78,7 @@
     </mat-card>
     }
     } @else {
+    <!-- Empty state -->
     <p>No content yet.</p>
     }
   </div>
