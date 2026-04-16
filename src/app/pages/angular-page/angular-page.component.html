@@ -5,14 +5,5 @@
     or add your own learning notes below.
   </p>
 
-  <button mat-raised-button color="primary" type="button" class="mb-4" (click)="showForm = !showForm">
-    {{ showForm ? 'Cancel' : 'Add new section' }}
-  </button>
-
-  @if (showForm) {
-    <app-dynamic-section-form (sectionCreated)="onSectionCreated($event)">
-    </app-dynamic-section-form>
-  }
-
-  <app-section-view [sections]="(sections$ | async) ?? []"></app-section-view>
+  <app-section-view [sections]="sections"></app-section-view>
 </section>

@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RegisterPageComponent } from "../../pages/register-page/register-page.component";
+import { LoginPageComponent } from "../../pages/login-page/login-page.component";
 
 @Component({
   selector: 'app-auth-layout',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RegisterPageComponent, LoginPageComponent],
   templateUrl: './auth-layout.component.html',
   styleUrls: ['./auth-layout.component.scss']
 })
-export class AuthLayoutComponent {}
+export class AuthLayoutComponent { }
 

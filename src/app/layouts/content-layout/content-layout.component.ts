@@ -1,28 +1,48 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { Subject, Observable } from 'rxjs';
-import { filter, startWith, takeUntil } from 'rxjs/operators';
-
+import { of, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import mockData from '../../../../public/mock-data.json';
+import { Section } from '../../models/section.model';
+import { CommonModule } from '@angular/common';
 import { TopNavbarComponent } from '../../shared/components/top-navbar/top-navbar.component';
 import { LeftSideMenuComponent } from '../../shared/components/left-side-menu/left-side-menu.component';
+import { AngularPageComponent } from '../../pages/angular-page/angular-page.component';
+import { JsPageComponent } from '../../pages/js-page/js-page.component';
+import { CommonWebdevPageComponent } from '../../pages/common-webdev-page/common-webdev-page.component';
 
 @Component({
   selector: 'app-content-layout',
   standalone: true,
-  imports: [TopNavbarComponent, LeftSideMenuComponent, RouterOutlet],
+  imports: [
+    TopNavbarComponent,
+    LeftSideMenuComponent,
+    CommonModule,
+    AngularPageComponent,
+    JsPageComponent,
+    CommonWebdevPageComponent
+  ],
   templateUrl: './content-layout.component.html',
   styleUrls: ['./content-layout.component.scss']
 })
 export class ContentLayoutComponent implements OnInit, OnDestroy {
-  private destroy$ = new Subject<void>();
+
+  sections$: Observable<Section[]> = of(mockData as any[]).pipe(
+    map(sections => sections.map(s => ({
+      ...s,
+      content: typeof s.content === 'string' ? JSON.parse(s.content) : s.content
+    })))
+  );
+
+  getSectionsByPage(sections: Section[], pageName: string): Section[] {
+    return sections.filter(s => s.pageName === pageName);
+  }
 
   ngOnInit(): void {
-    // Layout level initialization if any.
+
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+
   }
 }
 

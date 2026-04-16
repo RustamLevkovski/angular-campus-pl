@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "pageName": "angular",
+        "title": "Angular Basics",
+        "content": "[{\"type\":\"title\",\"titleText\":\"What is Angular?\",\"isBold\":true},{\"type\":\"text\",\"textContent\":\"Angular is a development platform, built on TypeScript. As a platform, Angular includes a component-based framework for building scalable web applications, a collection of well-integrated libraries that cover a wide variety of features, and a suite of developer tools to help you develop, build, test, and update your code.\"},{\"type\":\"unordered-list\",\"listItems\":[\"Component-driven architecture\",\"Built on TypeScript\",\"Powerful CLI\",\"Dependency Injection\"]}]"
+    },
+    {
+        "id": 2,
+        "pageName": "angular",
+        "title": "Angular Directives",
+        "content": "[{\"type\":\"title\",\"titleText\":\"Structural and Attribute Directives\",\"isBold\":true},{\"type\":\"text\",\"textContent\":\"Directives are classes that add additional behavior to elements in your Angular applications.\"},{\"type\":\"ordered-list\",\"listItems\":[\"NgIf\",\"NgFor\",\"NgClass\",\"NgStyle\"]}]"
+    },
+    {
+        "id": 3,
+        "pageName": "javascript",
+        "title": "ES6+ Features",
+        "content": "[{\"type\":\"title\",\"titleText\":\"Modern JavaScript syntax\",\"isBold\":true},{\"type\":\"text\",\"textContent\":\"Modern JavaScript (ES6 and beyond) has introduced many useful features that improve developer productivity and code readability.\"},{\"type\":\"unordered-list\",\"listItems\":[\"Arrow Functions\",\"Destructuring\",\"Template Literals\",\"Spread Operator\"]}]"
+    },
+    {
+        "id": 4,
+        "pageName": "javascript",
+        "title": "Asynchronous JS",
+        "content": "[{\"type\":\"title\",\"titleText\":\"Handling async operations\",\"isBold\":true},{\"type\":\"text\",\"textContent\":\"Asynchronous code execution is fundamental to JavaScript, allowing tasks like API calls and file operations to run without blocking the main thread.\"},{\"type\":\"ordered-list\",\"listItems\":[\"Callbacks\",\"Promises\",\"Async/Await\"]}]"
+    },
+    {
+        "id": 5,
+        "pageName": "webdev",
+        "title": "HTML & Semantics",
+        "content": "[{\"type\":\"title\",\"titleText\":\"Semantic Web Content\",\"isBold\":true},{\"type\":\"text\",\"textContent\":\"Semantic elements clearly describe their meaning in a human- and machine-readable way.\"},{\"type\":\"unordered-list\",\"listItems\":[\"<header> and <footer>\",\"<article> and <section>\",\"<main> and <nav>\"]}]"
+    },
+    {
+        "id": 6,
+        "pageName": "webdev",
+        "title": "CSS Layout",
+        "content": "[{\"type\":\"title\",\"titleText\":\"Flexbox and Grid\",\"isBold\":true},{\"type\":\"text\",\"textContent\":\"Modern CSS provides powerful tools for creating responsive and complex layouts with ease.\"},{\"type\":\"ordered-list\",\"listItems\":[\"Flexbox for one-dimensional layouts\",\"Grid for two-dimensional layouts\",\"Media queries for responsiveness\"]}]"
+    }
+]

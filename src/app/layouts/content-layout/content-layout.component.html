@@ -5,7 +5,11 @@
     <app-left-side-menu class="content-layout__side"></app-left-side-menu>
 
     <main class="content-layout__main">
-      <router-outlet></router-outlet>
+      @if (sections$ | async; as allSections) {
+        <app-angular-page [sections]="getSectionsByPage(allSections, 'angular')"></app-angular-page>
+        <app-js-page [sections]="getSectionsByPage(allSections, 'javascript')"></app-js-page>
+        <app-common-webdev-page [sections]="getSectionsByPage(allSections, 'webdev')"></app-common-webdev-page>
+      }
     </main>
 
   </div>

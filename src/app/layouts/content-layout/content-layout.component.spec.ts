@@ -1,20 +1,40 @@
-import { TestBed } from '@angular/core/testing';
-import { RouterOutlet, provideRouter } from '@angular/router';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ContentLayoutComponent } from './content-layout.component';
-import { TopNavbarComponent } from '../../shared/components/top-navbar/top-navbar.component';
-import { LeftSideMenuComponent } from '../../shared/components/left-side-menu/left-side-menu.component';
-
-import { provideMockStore } from '@ngrx/store/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { of, firstValueFrom } from 'rxjs';
+import { Section } from '../../models/section.model';
 
 describe('ContentLayoutComponent', () => {
-  it('creates the component successfully', async () => {
+  let component: ContentLayoutComponent;
+  let fixture: ComponentFixture<ContentLayoutComponent>;
+
+  beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ContentLayoutComponent, TopNavbarComponent, LeftSideMenuComponent],
-      providers: [provideRouter([]), provideMockStore({})]
+      imports: [ContentLayoutComponent],
+      providers: [provideHttpClient()]
     }).compileComponents();
 
-    const fixture = TestBed.createComponent(ContentLayoutComponent);
-    expect(fixture.componentInstance).toBeTruthy();
+    fixture = TestBed.createComponent(ContentLayoutComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should filter sections by page name', () => {
+    const mockSections: Section[] = [
+      { id: 1, pageName: 'angular', title: 'A', content: [] },
+      { id: 2, pageName: 'javascript', title: 'B', content: [] }
+    ];
+    const filtered = component.getSectionsByPage(mockSections, 'angular');
+    expect(filtered.length).toBe(1);
+    expect(filtered[0].pageName).toBe('angular');
+  });
+
+  it('should have sections$ observable', async () => {
+    const sections = await firstValueFrom(component.sections$);
+    expect(Array.isArray(sections)).toBe(true);
   });
 });
-

@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormArray, FormBuilder, FormControl, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule, } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,16 +8,16 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
-import { BlockType } from '../../../models/section-block.model';
+
 
 @Component({
   selector: 'app-dynamic-section-form',
   standalone: true,
   imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
-    MatFormFieldModule, 
-    MatInputModule, 
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatButtonModule,
     MatCheckboxModule,
     MatIconModule,
@@ -28,74 +28,6 @@ import { BlockType } from '../../../models/section-block.model';
   styleUrls: ['./dynamic-section-form.component.scss']
 })
 export class DynamicSectionFormComponent {
-  @Output() sectionCreated = new EventEmitter<{ title: string; content: string }>();
 
-  private fb = inject(FormBuilder);
 
-  form = this.fb.group({
-    title: ['', Validators.required],
-    contentBlocks: this.fb.array([])
-  });
-
-  get contentBlocks() {
-    return this.form.get('contentBlocks') as FormArray;
-  }
-
-  addBlock(type: BlockType) {
-    const block = this.fb.group({
-      type: [type, Validators.required],
-      titleText: [''],
-      isBold: [false],
-      textContent: [''],
-      listItems: this.fb.array([])
-    });
-
-    if (type === 'title') {
-      block.get('titleText')?.setValidators(Validators.required);
-      block.get('titleText')?.updateValueAndValidity();
-    } else if (type === 'text') {
-      block.get('textContent')?.setValidators(Validators.required);
-      block.get('textContent')?.updateValueAndValidity();
-    } else if (type === 'ordered-list' || type === 'unordered-list') {
-      this.addListItem(block.get('listItems') as FormArray);
-    }
-
-    this.contentBlocks.push(block);
-  }
-
-  removeBlock(index: number) {
-    this.contentBlocks.removeAt(index);
-  }
-
-  addListItem(listItemsArr: FormArray) {
-    listItemsArr.push(new FormControl('', Validators.required));
-  }
-
-  removeListItem(listItemsArr: FormArray, index: number) {
-    listItemsArr.removeAt(index);
-  }
-
-  getListItems(blockIndex: number): FormArray {
-    return this.contentBlocks.at(blockIndex).get('listItems') as FormArray;
-  }
-
-  getFormControl(formArray: FormArray, index: number): FormControl {
-    return formArray.at(index) as FormControl;
-  }
-
-  submit(formDirective: FormGroupDirective): void {
-    if (this.form.valid) {
-      const value = this.form.value;
-      
-      const serializedContent = JSON.stringify(value.contentBlocks);
-
-      this.sectionCreated.emit({
-        title: value.title!,
-        content: serializedContent
-      });
-      formDirective.resetForm();
-      this.form.reset();
-      this.contentBlocks.clear();
-    }
-  }
 }

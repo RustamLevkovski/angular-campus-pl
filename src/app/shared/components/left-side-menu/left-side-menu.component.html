@@ -1,11 +1,3 @@
 <aside class="left-side-menu">
-  @if (items$ | async; as items) {
-    <ul>
-      @for (item of items; track item.label) {
-        <li>
-          <a [href]="item.anchor">{{ item.label }}</a>
-        </li>
-      }
-    </ul>
-  }
+
 </aside>

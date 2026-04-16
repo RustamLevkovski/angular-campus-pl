@@ -1,58 +1,29 @@
-import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
-import { MenuService } from '../../core/services/menu.service';
-import { SectionsService } from '../../core/services/sections.service';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AngularPageComponent } from './angular-page.component';
+import { SectionViewComponent } from '../../shared/components/section-view/section-view.component';
 
 describe('AngularPageComponent', () => {
-  it('sets current page and ensures initial sections on init', async () => {
-    const menuService = { setCurrentPage: vi.fn() } as unknown as MenuService;
-    const sectionsService = {
-      ensureInitialSections: vi.fn(),
-      getSectionsForPage: vi.fn().mockReturnValue(of([])),
-      addSection: vi.fn(),
-    } as unknown as SectionsService;
+  let component: AngularPageComponent;
+  let fixture: ComponentFixture<AngularPageComponent>;
 
+  beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AngularPageComponent],
-      providers: [
-        { provide: MenuService, useValue: menuService },
-        { provide: SectionsService, useValue: sectionsService },
-      ],
+      imports: [AngularPageComponent, SectionViewComponent]
     }).compileComponents();
 
-    const fixture = TestBed.createComponent(AngularPageComponent);
-    fixture.detectChanges(); // triggers ngOnInit
-
-    expect((menuService as any).setCurrentPage).toHaveBeenCalledWith('angular');
-    expect((sectionsService as any).ensureInitialSections).toHaveBeenCalledWith('angular', expect.any(Array));
-    expect((sectionsService as any).getSectionsForPage).toHaveBeenCalledWith('angular');
+    fixture = TestBed.createComponent(AngularPageComponent);
+    component = fixture.componentInstance;
   });
 
-  it('adds section and hides form on section created', async () => {
-    const menuService = { setCurrentPage: vi.fn() } as unknown as MenuService;
-    const sectionsService = {
-      ensureInitialSections: vi.fn(),
-      getSectionsForPage: vi.fn().mockReturnValue(of([])),
-      addSection: vi.fn(),
-    } as unknown as SectionsService;
-
-    await TestBed.configureTestingModule({
-      imports: [AngularPageComponent],
-      providers: [
-        { provide: MenuService, useValue: menuService },
-        { provide: SectionsService, useValue: sectionsService },
-      ],
-    }).compileComponents();
-
-    const fixture = TestBed.createComponent(AngularPageComponent);
+  it('should create', () => {
     fixture.detectChanges();
+    expect(component).toBeTruthy();
+  });
 
-    fixture.componentInstance.showForm = true;
-    fixture.componentInstance.onSectionCreated({ title: 'T', content: 'C' });
-
-    expect((sectionsService as any).addSection).toHaveBeenCalledWith('angular', 'T', 'C');
-    expect(fixture.componentInstance.showForm).toBe(false);
+  it('should pass sections to app-section-view', () => {
+    component.sections = [{ id: 1, title: 'T', content: 'C' }];
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('app-section-view')).toBeTruthy();
   });
 });
-
