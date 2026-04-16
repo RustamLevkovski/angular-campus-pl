@@ -1,40 +1,31 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { of, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import mockData from '../../../../public/mock-data.json';
-import { Section } from '../../models/section.model';
 import { CommonModule } from '@angular/common';
-import { TopNavbarComponent } from '../../shared/components/top-navbar/top-navbar.component';
-import { LeftSideMenuComponent } from '../../shared/components/left-side-menu/left-side-menu.component';
-import { AngularPageComponent } from '../../pages/angular-page/angular-page.component';
-import { JsPageComponent } from '../../pages/js-page/js-page.component';
-import { CommonWebdevPageComponent } from '../../pages/common-webdev-page/common-webdev-page.component';
 
 @Component({
   selector: 'app-content-layout',
   standalone: true,
   imports: [
-    TopNavbarComponent,
-    LeftSideMenuComponent,
     CommonModule,
-    AngularPageComponent,
-    JsPageComponent,
-    CommonWebdevPageComponent
   ],
   templateUrl: './content-layout.component.html',
   styleUrls: ['./content-layout.component.scss']
 })
 export class ContentLayoutComponent implements OnInit, OnDestroy {
 
-  sections$: Observable<Section[]> = of(mockData as any[]).pipe(
-    map(sections => sections.map(s => ({
-      ...s,
-      content: typeof s.content === 'string' ? JSON.parse(s.content) : s.content
-    })))
-  );
+  // 1. Create an Observable Section Array from mockData
+  // 2. Use RxJS operator for stream creation. Pass mockData as any[] to the operator. 
+  // 3. Use utility operator for stream handling (.pipe)
+  // 4. Use transform RxJS operator (map) to transform the data to the Section interface
+  // 5. Inside map, iterate through sections, check if section content typeOf string and JSON.parse the 'content' if it is a string
+  sections$: any;
 
-  getSectionsByPage(sections: Section[], pageName: string): Section[] {
-    return sections.filter(s => s.pageName === pageName);
+
+  //1. Pass list of arguments: sections and pageName
+  //2. Return filtered sections based on pageName
+  //3. Use it in the template
+  //4. Add type annotations for arguments and return value
+  getSectionsByPage() {
+
   }
 
   ngOnInit(): void {

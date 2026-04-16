@@ -1,15 +1,18 @@
 <div class="content-layout">
-  <app-top-navbar class="content-layout__top"></app-top-navbar>
+  <!--Add app-top-navbar here-->
+
 
   <div class="content-layout__body">
-    <app-left-side-menu class="content-layout__side"></app-left-side-menu>
-
+    <!--Add app-left-side-menu with class content-layout__side here-->
     <main class="content-layout__main">
-      @if (sections$ | async; as allSections) {
-        <app-angular-page [sections]="getSectionsByPage(allSections, 'angular')"></app-angular-page>
-        <app-js-page [sections]="getSectionsByPage(allSections, 'javascript')"></app-js-page>
-        <app-common-webdev-page [sections]="getSectionsByPage(allSections, 'webdev')"></app-common-webdev-page>
-      }
+      <!--
+      1. Add app-angular-page, app-js-page and app-common-webdev-page in the @if block. 
+      2. In the @if body use sections$ Observable as data source. Apply async pipe and mark it as allSections 
+      3. Pass the result of getSectionsByPage(allSections, 'angular') to app-angular-page as sections input property
+      4. Pass the result of getSectionsByPage(allSections, 'javascript') to app-js-page as sections input property
+      5. Pass the result of getSectionsByPage(allSections, 'webdev') to app-common-webdev-page as sections input property
+      here-->
+
     </main>
 
   </div>

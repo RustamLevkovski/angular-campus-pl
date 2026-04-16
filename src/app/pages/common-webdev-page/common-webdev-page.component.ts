@@ -1,18 +1,17 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SectionViewComponent } from '../../shared/components/section-view/section-view.component';
-import { Section } from '../../models/section.model';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-common-webdev-page',
   standalone: true,
-  imports: [CommonModule, SectionViewComponent, MatButtonModule],
+  imports: [CommonModule, MatButtonModule],
   templateUrl: './common-webdev-page.component.html',
   styleUrls: ['./common-webdev-page.component.scss']
 })
 export class CommonWebdevPageComponent {
-  @Input() sections: Section[] = [];
-  showForm = false;
+  //1. Add @Input() decorator for sections property
+  //2. Add type annotation for sections property
+  //3. Initialize sections property with an empty array
 }
 

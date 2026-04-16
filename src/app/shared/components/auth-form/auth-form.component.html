@@ -1,5 +1,6 @@
 <mat-card class="auth-card">
-  <h2 class="auth-title">{{ title }}</h2>
+  <!--1. Add h2 tag with title property and class auth-title-->
+
 
   <form class="auth-form">
     <mat-form-field appearance="outline" class="w-full">
@@ -14,37 +15,37 @@
 
     </mat-form-field>
 
-    @if (mode === 'register') {
+    // Use if block to display confirm password field when mode is register
+
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>Confirm password</mat-label>
       <input matInput type="password" />
     </mat-form-field>
-    }
 
-    @if (error) {
+    // Use if block to display error message when error is present
+
     <div class="error-text">
       {{ error }}
     </div>
-    }
 
-    <button mat-raised-button color="primary" type="submit" (click)="onSubmit($event)" [disabled]="loading">
-      @if (!loading) {
-      {{ mode === 'login' ? 'Login' : 'Sign up' }}
-      } @else {
-      <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner>
-      }
+    //Add logic for click event handling via onSubmit method
+    <button mat-raised-button color="primary" type="submit" [disabled]="loading">
+      //Use if block to display loading <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner>
+      when loading is true
+      // and Button text 'Login' or 'Sign up' depends on mode when loading is false
     </button>
   </form>
 
   <div class="auth-footer">
-    @if (mode === 'login') {
+    //Use if block to display different text based on mode
+    // for mode is login.
     <span>Don’t have an account?</span>
     <a>Sign up</a>
     <p>admin@devhub.com</p>
     <p>password</p>
-    } @else {
+    // for mode is register
     <span>Already have an account?</span>
     <a>Login</a>
-    }
+
   </div>
 </mat-card>
