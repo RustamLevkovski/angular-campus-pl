@@ -6,7 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
+    "vitest": "vitest",
+    "test": "npm run test:structure && npm run test:coverage",
+    "test:structure": "vitest run tests/structure.spec.ts",
     "test:coverage": "ng test --watch=false --coverage",
     "analyze": "ng build --configuration development && source-map-explorer dist/angular_campus/browser/**/*.js --no-border-checks"
   },

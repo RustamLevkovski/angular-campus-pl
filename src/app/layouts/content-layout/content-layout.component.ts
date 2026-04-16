@@ -5,10 +5,10 @@ import mockData from '../../../../public/mock-data.json';
 import { Section } from '../../models/section.model';
 import { CommonModule } from '@angular/common';
 import { TopNavbarComponent } from '../../shared/components/top-navbar/top-navbar.component';
-import { LeftSideMenuComponent } from '../../shared/components/left-side-menu/left-side-menu.component';
 import { AngularPageComponent } from '../../pages/angular-page/angular-page.component';
 import { JsPageComponent } from '../../pages/js-page/js-page.component';
 import { CommonWebdevPageComponent } from '../../pages/common-webdev-page/common-webdev-page.component';
+import { LeftSideMenuComponent } from '../../shared/components/left-side-menu/left-side-menu.component';
 
 @Component({
   selector: 'app-content-layout',

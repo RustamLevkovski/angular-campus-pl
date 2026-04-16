@@ -5,7 +5,5 @@ import { Directive, HostListener } from '@angular/core';
   standalone: true
 })
 export class ClickLoggerDirective {
-  @HostListener('click') onClick() {
-    console.log('Element clicked at:', new Date().toISOString());
-  }
+
 }
