@@ -45,6 +45,7 @@
     "@angular/cli": "^21.1.2",
     "@angular/compiler-cli": "^21.1.0",
     "@angular/material": "^21.2.0",
+    "@angular/platform-browser-dynamic": "^21.2.0",
     "@vitest/coverage-v8": "^4.0.18",
     "@vitest/ui": "^4.0.18",
     "jsdom": "^27.1.0",

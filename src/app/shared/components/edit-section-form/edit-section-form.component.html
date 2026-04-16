@@ -1,0 +1,81 @@
+<form [formGroup]="form" (ngSubmit)="submit(formDirective)" #formDirective="ngForm"
+  class="edit-section-form flex flex-col gap-4">
+  <div class="flex justify-between items-center">
+    <h3>Edit Section</h3>
+    <button mat-icon-button (click)="cancelEdit()"><mat-icon>close</mat-icon></button>
+  </div>
+  
+  <mat-form-field class="w-full">
+    <mat-label>Section Title</mat-label>
+    <input matInput formControlName="title" />
+  </mat-form-field>
+
+  <div class="blocks-container flex flex-col gap-4" formArrayName="contentBlocks">
+    @for (block of contentBlocks.controls; track block; let blockIndex = $index) {
+    <mat-card class="block-card p-4 relative" [formGroupName]="blockIndex">
+      <button mat-icon-button color="warn" class="absolute top-2 right-2" type="button"
+        (click)="removeBlock(blockIndex)">
+        <mat-icon>delete</mat-icon>
+      </button>
+
+      <div class="block-content mt-6">
+        @if (block.get('type')?.value === 'title') {
+        <div class="flex flex-col gap-2">
+          <mat-checkbox formControlName="isBold">Bold Title</mat-checkbox>
+          <mat-form-field class="w-full">
+            <mat-label>Title Text</mat-label>
+            <input matInput formControlName="titleText" />
+          </mat-form-field>
+        </div>
+        }
+
+        @if (block.get('type')?.value === 'text') {
+        <mat-form-field class="w-full">
+          <mat-label>Text Content</mat-label>
+          <textarea matInput rows="4" formControlName="textContent"></textarea>
+        </mat-form-field>
+        }
+
+        @if (block.get('type')?.value === 'ordered-list' || block.get('type')?.value === 'unordered-list') {
+        <div class="list-container flex flex-col gap-2" formArrayName="listItems">
+          <h4>{{ block.get('type')?.value === 'ordered-list' ? 'Ordered List' : 'Unordered List' }}</h4>
+          @for (item of getListItems(blockIndex).controls; track item; let itemIndex = $index) {
+          <div class="flex gap-2 items-center">
+            <mat-form-field class="flex-grow">
+              <mat-label>Item {{ itemIndex + 1 }}</mat-label>
+              <input matInput [formControl]="getFormControl(getListItems(blockIndex), itemIndex)" />
+            </mat-form-field>
+            <button mat-icon-button color="warn" type="button"
+              (click)="removeListItem(getListItems(blockIndex), itemIndex)">
+              <mat-icon>remove_circle</mat-icon>
+            </button>
+          </div>
+          }
+          <button mat-button color="primary" type="button" (click)="addListItem(getListItems(blockIndex))">
+            <mat-icon>add</mat-icon> Add List Item
+          </button>
+        </div>
+        }
+      </div>
+    </mat-card>
+    }
+  </div>
+
+  <div class="add-block-actions flex gap-2 flex-wrap mb-4">
+    <button mat-stroked-button type="button" (click)="addBlock('title')"><mat-icon>title</mat-icon> Add Title</button>
+    <button mat-stroked-button type="button" (click)="addBlock('text')"><mat-icon>notes</mat-icon> Add Text Segment</button>
+    <button mat-stroked-button type="button"
+      (click)="addBlock('ordered-list')"><mat-icon>format_list_numbered</mat-icon> Add Ordered List</button>
+    <button mat-stroked-button type="button"
+      (click)="addBlock('unordered-list')"><mat-icon>format_list_bulleted</mat-icon> Add Unordered List</button>
+  </div>
+
+  <div class="actions flex gap-2">
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+      Update Section
+    </button>
+    <button mat-button type="button" (click)="cancelEdit()">
+      Cancel
+    </button>
+  </div>
+</form>

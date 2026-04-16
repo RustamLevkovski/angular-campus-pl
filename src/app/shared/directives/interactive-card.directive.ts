@@ -5,10 +5,11 @@ import { ClickLoggerDirective } from './click-logger.directive';
 @Directive({
   selector: '[appInteractiveCard]',
   standalone: true,
-  // Directive Composition API
+  //    Directive Composition API  
   hostDirectives: [
     { directive: HoverElevationDirective },
     { directive: ClickLoggerDirective }
   ]
+
 })
-export class InteractiveCardDirective {}
+export class InteractiveCardDirective { }

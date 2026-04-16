@@ -1,15 +1,19 @@
 <div class="section-view">
-  <div class="grid gap-4">
-    @if (sections.length > 0) {
+  <div class="grid gap-4 ">
+    @if (sections.length) {
     @for (section of sections; track section.id) {
     <mat-card class="p-4 mb-4" [id]="'section-' + section.id">
       <!-- view mode -->
       @if (editingIndex !== $index) {
       <mat-card-header class="flex justify-between items-center w-full">
         <mat-card-title>{{ section.title }}</mat-card-title>
+        <div class="actions">
+          <button mat-button color="primary" (click)="startEdit($index)">Edit</button>
+          <button mat-button color="warn" (click)="deleteSection(section.id)">Remove</button>
+        </div>
       </mat-card-header>
       <mat-card-content class="mt-4 flex flex-col gap-4">
-        @if (asArray(section.content); as blocks) {
+        @if (parseContent(section.content); as blocks) {
         @for (block of blocks; track $index) {
         @if (block.type === 'title') {
         <h3 [class.font-bold]="block.isBold" [class.text-xl]="block.isBold" [class.text-lg]="!block.isBold">{{
@@ -37,6 +41,12 @@
         <p class="whitespace-pre-wrap">{{ section.content }}</p>
         }
       </mat-card-content>
+      }
+
+      <!-- edit mode -->
+      @if (editingIndex === $index) {
+      <app-edit-section-form [section]="section" (save)="saveEdit(section, section.pageName || 'angular', $event)"
+        (cancel)="cancelEdit()"></app-edit-section-form>
       }
     </mat-card>
     }

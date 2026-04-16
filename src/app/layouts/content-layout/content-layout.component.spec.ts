@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ContentLayoutComponent } from './content-layout.component';
-import { provideHttpClient } from '@angular/common/http';
-import { of, firstValueFrom } from 'rxjs';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { of } from 'rxjs';
 import { Section } from '../../models/section.model';
 
 describe('ContentLayoutComponent', () => {
@@ -10,31 +10,41 @@ describe('ContentLayoutComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ContentLayoutComponent],
-      providers: [provideHttpClient()]
+      imports: [ContentLayoutComponent, NoopAnimationsModule]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ContentLayoutComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
-  it('should filter sections by page name', () => {
+  it('should filter sections by pageName in getSectionsByPage', () => {
     const mockSections: Section[] = [
-      { id: 1, pageName: 'angular', title: 'A', content: [] },
-      { id: 2, pageName: 'javascript', title: 'B', content: [] }
+      { id: 1, title: 'A_S1', content: 'C1', pageName: 'angular' },
+      { id: 2, title: 'JS_S1', content: 'C2', pageName: 'javascript' },
+      { id: 3, title: 'A_S2', content: 'C3', pageName: 'angular' }
     ];
-    const filtered = component.getSectionsByPage(mockSections, 'angular');
-    expect(filtered.length).toBe(1);
-    expect(filtered[0].pageName).toBe('angular');
+    
+    const angularRes = component.getSectionsByPage(mockSections, 'angular');
+    expect(angularRes.length).toBe(2);
+    expect(angularRes[0].title).toBe('A_S1');
+    expect(angularRes[1].title).toBe('A_S2');
   });
 
-  it('should have sections$ observable', async () => {
-    const sections = await firstValueFrom(component.sections$);
-    expect(Array.isArray(sections)).toBe(true);
+  it('should parse content blocks from the sections$ observable correctly', async () => {
+    fixture.detectChanges();
+    const sections = await new Promise<Section[]>(resolve => {
+        component.sections$.subscribe(s => resolve(s));
+    });
+    
+    expect(sections.length).toBeGreaterThan(0);
+    const firstS = sections[0];
+    if (typeof firstS.content !== 'string') {
+      expect(Array.isArray(firstS.content)).toBe(true);
+    }
   });
 });

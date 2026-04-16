@@ -4,5 +4,14 @@
     Curated JavaScript topics and your own notes. Use the left menu to jump to any section.
   </p>
 
-  <app-section-view [sections]="sections"></app-section-view>
+  <button mat-raised-button color="primary" type="button" class="mb-4" (click)="showForm = !showForm">
+    {{ showForm ? 'Cancel' : 'Add new section' }}
+  </button>
+
+  @if (showForm) {
+  <app-dynamic-section-form (sectionCreated)="onSectionCreated($event)">
+  </app-dynamic-section-form>
+  }
+
+  <app-section-view [sections]="sections" (update)="updateSection($event)" (remove)="removeSection($event)"></app-section-view>
 </section>
