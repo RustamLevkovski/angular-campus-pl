@@ -2,8 +2,6 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { InteractiveCardDirective } from './interactive-card.directive';
-import { HoverElevationDirective } from './hover-elevation.directive';
-import { ClickLoggerDirective } from './click-logger.directive';
 
 @Component({
   standalone: true,

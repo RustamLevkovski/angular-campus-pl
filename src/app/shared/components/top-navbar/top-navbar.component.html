@@ -4,7 +4,7 @@
   </div>
   <nav class="top-navbar__nav">
     @for (link of links; track link.label) {
-    <a>{{ link.label }}</a>
+    <a [routerLink]="link.url" routerLinkActive="active">{{ link.label }}</a>
     }
   </nav>
 </header>

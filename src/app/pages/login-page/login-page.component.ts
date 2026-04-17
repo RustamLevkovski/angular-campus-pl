@@ -9,9 +9,4 @@ import { AuthFormComponent } from '../../shared/components/auth-form/auth-form.c
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss']
 })
-export class LoginPageComponent {
-  onLogin($event: { mode: "login" | "register"; }) {
-    console.log($event);
-  }
-}
-
+export class LoginPageComponent { }

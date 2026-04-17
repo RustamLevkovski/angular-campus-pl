@@ -4,21 +4,14 @@
     General web development topics live here. Navigate sections via the left menu or create your own.
   </p>
 
-  <!-- add a click handler to the button to toggle showForm (showForm = !showForm) -->
-  <!-- change the button label: show 'Cancel' when showForm is true, 'Add new section' when false -->
   <button mat-raised-button color="primary" type="button" class="mb-4" (click)="showForm = !showForm">
     {{ showForm ? 'Cancel' : 'Add new section' }}
   </button>
 
-  <!-- use an @if block to show the app-dynamic-section-form only when showForm is true -->
-  <!-- bind the sectionCreated output to onSectionCreated($event) -->
   @if (showForm) {
-  <app-dynamic-section-form>
+  <app-dynamic-section-form (sectionCreated)="onSectionCreated($event)">
   </app-dynamic-section-form>
   }
 
-  <!-- bind the [sections] input to the sections property -->
-  <!-- bind the (update) output to updateSection($event) -->
-  <!-- bind the (remove) output to removeSection($event) -->
-  <app-section-view [sections]="sections"></app-section-view>
+  <app-section-view [sections]="(sections$ | async) ?? []"></app-section-view>
 </section>

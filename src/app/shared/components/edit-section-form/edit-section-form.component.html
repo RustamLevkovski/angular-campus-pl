@@ -1,101 +1,72 @@
-<!-- 1. Bind [formGroup] to the form property, bind (ngSubmit) to submit(formDirective), add local ref #formDirective="ngForm" -->
-<form class="edit-section-form flex flex-col gap-4">
-  <div class="flex justify-between items-center">
-    <h3>Edit Section</h3>
-    <!-- 2. Bind (click) to cancelEdit() -->
-    <button mat-icon-button><mat-icon>close</mat-icon></button>
-  </div>
-
-  <!-- 3. Bind the title input with formControlName="title" -->
+<form [formGroup]="form" (ngSubmit)="submit()" class="edit-section-form flex flex-col gap-4 mt-4">
   <mat-form-field class="w-full">
     <mat-label>Section Title</mat-label>
-    <input matInput />
+    <input matInput formControlName="title" />
   </mat-form-field>
 
-  <!-- 4. Bind the wrapper div with formArrayName="contentBlocks" -->
-  <div class="blocks-container flex flex-col gap-4">
-    <!-- 5. Use @for to iterate over contentBlocks.controls, track by block, expose blockIndex via let blockIndex = $index -->
-
-    <!-- 6. Bind [formGroupName] to blockIndex on the mat-card -->
-    <mat-card class="block-card p-4 relative">
-      <!-- 7. Bind (click) to removeBlock(blockIndex) -->
-      <button mat-icon-button color="warn" class="absolute top-2 right-2" type="button">
+  <div class="blocks-container flex flex-col gap-4" formArrayName="contentBlocks">
+    @for (block of contentBlocks.controls; track block; let blockIndex = $index) {
+    <mat-card class="block-card p-4 relative" [formGroupName]="blockIndex">
+      <button mat-icon-button color="warn" class="absolute top-2 right-2" type="button"
+        (click)="removeBlock(blockIndex)">
         <mat-icon>delete</mat-icon>
       </button>
 
       <div class="block-content mt-6">
-        <!-- 8. Use @if to conditionally render block UI based on block.get('type')?.value -->
-
-        <!-- 8a. If block type is 'title': -->
-
+        @if (block.get('type')?.value === 'title') {
         <div class="flex flex-col gap-2">
-          <!-- 9. Bind mat-checkbox with formControlName="isBold" -->
-          <mat-checkbox>Bold Title</mat-checkbox>
+          <mat-checkbox formControlName="isBold">Bold Title</mat-checkbox>
           <mat-form-field class="w-full">
             <mat-label>Title Text</mat-label>
-            <!-- 10. Bind input with formControlName="titleText" -->
-            <input matInput />
+            <input matInput formControlName="titleText" />
           </mat-form-field>
         </div>
+        }
 
-
-        <!-- 8b. If block type is 'text': -->
-
+        @if (block.get('type')?.value === 'text') {
         <mat-form-field class="w-full">
           <mat-label>Text Content</mat-label>
-          <!-- 11. Bind textarea with formControlName="textContent" -->
-          <textarea matInput rows="4"></textarea>
+          <textarea matInput rows="4" formControlName="textContent"></textarea>
         </mat-form-field>
+        }
 
-
-        <!-- 8c. If block type is 'ordered-list' OR 'unordered-list': -->
-
-        <!-- 12. Bind the div with formArrayName="listItems" -->
-        <div class="list-container flex flex-col gap-2">
-          <!-- 13. Output 'Ordered List' or 'Unordered List' based on the block type -->
-          <h4>{{ "" }}</h4>
-          <!-- 14. Use @for to iterate getListItems(blockIndex).controls, track by item, expose itemIndex via let itemIndex = $index -->
-
+        @if (block.get('type')?.value === 'ordered-list' || block.get('type')?.value === 'unordered-list') {
+        <div class="list-container flex flex-col gap-2" formArrayName="listItems">
+          <h4>{{ block.get('type')?.value === 'ordered-list' ? 'Ordered List' : 'Unordered List' }}</h4>
+          @for (item of getListItems(blockIndex).controls; track item; let itemIndex = $index) {
           <div class="flex gap-2 items-center">
             <mat-form-field class="flex-grow">
-              <!-- 15. Output itemIndex + 1 -->
-              <mat-label>Item </mat-label>
-              <!-- 16. Bind input [formControl] to getFormControl(getListItems(blockIndex), itemIndex) -->
-              <input matInput />
+              <mat-label>Item {{ itemIndex + 1 }}</mat-label>
+              <input matInput [formControl]="getFormControl(getListItems(blockIndex), itemIndex)" />
             </mat-form-field>
-            <!-- 17. Bind (click) to removeListItem(getListItems(blockIndex), itemIndex) -->
-            <button mat-icon-button color="warn" type="button">
+            <button mat-icon-button color="warn" type="button"
+              (click)="removeListItem(getListItems(blockIndex), itemIndex)">
               <mat-icon>remove_circle</mat-icon>
             </button>
           </div>
-
-          <!-- 18. Bind (click) to addListItem(getListItems(blockIndex)) -->
-          <button mat-button color="primary" type="button">
+          }
+          <button mat-button color="primary" type="button" (click)="addListItem(getListItems(blockIndex))">
             <mat-icon>add</mat-icon> Add List Item
           </button>
         </div>
-
+        }
       </div>
     </mat-card>
-
+    }
   </div>
 
-  <!-- 19. Bind (click) for each button to addBlock() with the correct block type argument ('title', 'text', 'ordered-list', 'unordered-list') -->
   <div class="add-block-actions flex gap-2 flex-wrap mb-4">
-    <button mat-stroked-button type="button"><mat-icon>title</mat-icon> Add Title</button>
-    <button mat-stroked-button type="button"><mat-icon>notes</mat-icon> Add Text Segment</button>
-    <button mat-stroked-button type="button"><mat-icon>format_list_numbered</mat-icon> Add Ordered List</button>
-    <button mat-stroked-button type="button"><mat-icon>format_list_bulleted</mat-icon> Add Unordered List</button>
+    <button mat-stroked-button type="button" (click)="addBlock('title')"><mat-icon>title</mat-icon> Add Title</button>
+    <button mat-stroked-button type="button" (click)="addBlock('text')"><mat-icon>notes</mat-icon> Add Text
+      Segment</button>
+    <button mat-stroked-button type="button"
+      (click)="addBlock('ordered-list')"><mat-icon>format_list_numbered</mat-icon> Add Ordered List</button>
+    <button mat-stroked-button type="button"
+      (click)="addBlock('unordered-list')"><mat-icon>format_list_bulleted</mat-icon> Add Unordered List</button>
   </div>
 
-  <div class="actions flex gap-2">
-    <!-- 20. Bind [disabled] to form.invalid -->
-    <button mat-raised-button color="primary" type="submit">
-      Update Section
-    </button>
-    <!-- 21. Bind (click) to cancelEdit() -->
-    <button mat-button type="button">
-      Cancel
-    </button>
+  <div class="flex gap-2 justify-end">
+    <button mat-button type="button" (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Save</button>
   </div>
 </form>

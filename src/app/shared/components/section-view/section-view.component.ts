@@ -1,8 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Section } from '../../../models/section.model';
+import { SectionBlock } from '../../../models/section-block.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { SectionsService } from '../../../core/services/sections.service';
+import { EditSectionFormComponent } from '../edit-section-form/edit-section-form.component';
 
 @Component({
   selector: 'app-section-view',
@@ -11,75 +14,58 @@ import { MatButtonModule } from '@angular/material/button';
     CommonModule,
     MatCardModule,
     MatButtonModule,
+    EditSectionFormComponent
   ],
   templateUrl: './section-view.component.html',
   styleUrls: ['./section-view.component.scss']
 })
 export class SectionViewComponent {
   @Input() sections: Section[] = [];
-  /*
-   * - Create output props: update: the updated Section object when edits are saved.
-   * - Create output props: remove: the ID (number) of the section to be deleted.
-   */
-
-
 
   editingIndex: number | null = null;
 
-  //Inject ChangeDetectorRef to manually trigger change detection
+  private sectionsService = inject(SectionsService);
+  private cdr = inject(ChangeDetectorRef);
 
-
-  // - Assign the provided `index` to the `editingIndex` variable.
-  // - Call `this.cdr.detectChanges()` to force the view to update immediately.
-  // - Method should apply index as a number. 
-  startEdit(): void {
-
+  startEdit(index: number): void {
+    this.editingIndex = index;
+    this.cdr.detectChanges();
   }
 
-
-  // - Reset `editingIndex` to `null`.
-  // - Call `this.cdr.detectChanges()` to switch the UI back to view mode.
   cancelEdit(): void {
-
+    this.editingIndex = null;
+    this.cdr.detectChanges();
   }
 
-
-  // - add parameters to this method to fix the template error:
-  //   - section: Section
-  //   - pageName: string
-  //   - event: { title: string; content: string }
-  //
-  // Steps to implement:
-  // - Create an `updatedSection` object. Use the spread operator to copy the original `section`,
-  //   then overwrite `pageName`, `title` (from event.title), and `content` (from event.content).
-  // - Emit the `updatedSection` using the `update` EventEmitter.
-  // - Reset `editingIndex` to `null` to exit edit mode.
-  // - Call `this.cdr.detectChanges()`.
-  saveEdit(): void {
-
+  saveEdit(section: Section, pageName: string, event: { title: string; content: string }): void {
+    const updatedSection = {
+      ...section,
+      pageName,
+      title: event.title,
+      content: event.content
+    };
+    this.sectionsService.updateSection(updatedSection as any);
+    this.editingIndex = null;
+    this.cdr.detectChanges();
   }
 
-  // - Emit the provided `id` using the `remove` EventEmitter.
-  // Method should accept id as a number.
-  deleteSection(): void {
-
+  deleteSection(id: number): void {
+    this.sectionsService.removeSection(id);
   }
 
-  // Task 5: Parse the section's content into structured blocks.
-  // - If `content` is falsy, return `null`.
-  // - If `content` is already an Array, return it directly.
-  // - Wrap the following in a try-catch block:
-  //   - Parse `content` using JSON.parse().
-  //   - If the parsed result is an Array containing objects with a 'typeof' property is 'object', and type' in parsed[0] ) return it as `SectionBlock[]`.
-  //   - Otherwise, return `null`.
-  // - If the try-catch block catches an error, return `null`.
-  // Method should accept content as a string or SectionBlock[] and return SectionBlock[] or null.
-  parseContent() {
-
-  }
-
-  // Remove it. 
-  asArray(content: any): any[] | null {
-    return Array.isArray(content) ? content : null;
+  parseContent(content: string | SectionBlock[]): SectionBlock[] | null {
+    if (!content) return null;
+    if (Array.isArray(content)) {
+      return content as SectionBlock[];
+    }
+    try {
+      const parsed = JSON.parse(content as string);
+      if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'object' && 'type' in parsed[0]) {
+        return parsed as SectionBlock[];
+      }
+      return null;
+    } catch {
+      return null;
+    }
   }
 }

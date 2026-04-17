@@ -22,9 +22,11 @@ describe('DynamicSectionFormComponent', () => {
   });
 
   it('should add different types of blocks correctly', () => {
+    fixture.detectChanges();
     component.addBlock('title');
     component.addBlock('text');
     component.addBlock('ordered-list');
+    fixture.detectChanges();
     
     expect(component.contentBlocks.length).toEqual(3);
     expect(component.contentBlocks.at(0).get('type')?.value).toBe('title');
@@ -33,10 +35,13 @@ describe('DynamicSectionFormComponent', () => {
   });
 
   it('should remove a block', () => {
+    fixture.detectChanges();
     component.addBlock('text');
     component.addBlock('title');
+    fixture.detectChanges();
     
     component.removeBlock(0);
+    fixture.detectChanges();
     
     expect(component.contentBlocks.length).toEqual(1);
     expect(component.contentBlocks.at(0).get('type')?.value).toBe('title');
@@ -49,6 +54,7 @@ describe('DynamicSectionFormComponent', () => {
     component.form.patchValue({ title: 'My New Section' });
     component.addBlock('text');
     component.contentBlocks.at(0).get('textContent')?.setValue('This is content');
+    fixture.detectChanges();
     
     component.submit(mockFormDirective);
     
@@ -71,13 +77,17 @@ describe('DynamicSectionFormComponent', () => {
   });
 
   it('should allow adding and removing list items', () => {
+    fixture.detectChanges();
     component.addBlock('unordered-list');
+    fixture.detectChanges();
     const listItems = component.getListItems(0);
     
     component.addListItem(listItems);
+    fixture.detectChanges();
     expect(listItems.length).toBe(2); // Starts with 1 by default
     
     component.removeListItem(listItems, 0);
+    fixture.detectChanges();
     expect(listItems.length).toBe(1);
   });
 });

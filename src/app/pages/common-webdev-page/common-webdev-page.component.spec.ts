@@ -1,29 +1,32 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonWebdevPageComponent } from './common-webdev-page.component';
-import { SectionViewComponent } from '../../shared/components/section-view/section-view.component';
-import { DynamicSectionFormComponent } from '../../shared/components/dynamic-section-form/dynamic-section-form.component';
+import { MenuService } from '../../core/services/menu.service';
+import { SectionsService } from '../../core/services/sections.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { of } from 'rxjs';
 
 describe('CommonWebdevPageComponent', () => {
   let component: CommonWebdevPageComponent;
   let fixture: ComponentFixture<CommonWebdevPageComponent>;
-  let store: { [key: string]: string } = {};
+  let mockMenuService: any;
+  let mockSectionsService: any;
 
   beforeEach(async () => {
-    store = {};
-
-    const localStorageStub: Storage = {
-      getItem: (key: string) => store[key] ?? null,
-      setItem: (key: string, value: string) => { store[key] = value; },
-      removeItem: (key: string) => { delete store[key]; },
-      clear: () => { store = {}; },
-      key: (index: number) => Object.keys(store)[index] ?? null,
-      length: 0,
+    mockMenuService = {
+      setCurrentPage: vi.fn()
     };
-    Object.defineProperty(window, 'localStorage', { value: localStorageStub, writable: true });
+    mockSectionsService = {
+      ensureInitialSections: vi.fn(),
+      getSectionsForPage: vi.fn().mockReturnValue(of([{ id: 1, title: 'Test Section', content: 'test content' }])),
+      addSection: vi.fn()
+    };
 
     await TestBed.configureTestingModule({
-      imports: [CommonWebdevPageComponent, SectionViewComponent, DynamicSectionFormComponent, NoopAnimationsModule]
+      imports: [CommonWebdevPageComponent, NoopAnimationsModule],
+      providers: [
+        { provide: MenuService, useValue: mockMenuService },
+        { provide: SectionsService, useValue: mockSectionsService }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(CommonWebdevPageComponent);
@@ -31,24 +34,25 @@ describe('CommonWebdevPageComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create and load sections', () => {
     expect(component).toBeTruthy();
+    expect(mockMenuService.setCurrentPage).toHaveBeenCalledWith('webdev');
+    expect(mockSectionsService.ensureInitialSections).toHaveBeenCalled();
+    component.sections$.subscribe(sections => {
+      expect(sections.length).toBe(1);
+    });
   });
 
-  it('should add a new section for webdev and save to localStorage', () => {
-    component.onSectionCreated({ title: 'New Webdev', content: 'Content' });
-
-    expect(component.sections.length).toBe(1);
-    expect(component.sections[0].title).toBe('New Webdev');
-    expect(store['extra_sections_webdev']).toBeDefined();
+  it('should toggle form', () => {
+    expect(component.showForm).toBe(false);
+    const button = fixture.nativeElement.querySelector('button');
+    button.click();
+    expect(component.showForm).toBe(true);
   });
 
-  it('should remove an extra section from webdev', () => {
-    component.addSection('webdev', 'To Remove WD', 'Content');
-    const id = component.sections[0].id;
-
-    component.removeSection(id);
-
-    expect(component.sections.length).toBe(0);
+  it('should add section', () => {
+    component.onSectionCreated({ title: 'New', content: 'C' });
+    expect(mockSectionsService.addSection).toHaveBeenCalledWith('webdev', 'New', 'C');
+    expect(component.showForm).toBe(false);
   });
 });

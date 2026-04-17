@@ -5,13 +5,14 @@ import { Directive, ElementRef, HostListener, Renderer2, inject } from '@angular
   standalone: true
 })
 export class HoverElevationDirective {
-  //inject ElementRef (el) and Renderer2 (renderer)
+  private el = inject(ElementRef);
+  private renderer = inject(Renderer2);
 
-  //use HostListener to listen to mouseenter events on the host element - call it onMouseEnter()
-  //add the mat-elevation-z8 class to the host element
+  @HostListener('mouseenter') onMouseEnter() {
+    this.renderer.addClass(this.el.nativeElement, 'mat-elevation-z8');
+  }
 
-  //use HostListener to listen to mouseleave events on the host element - call it onMouseLeave()
-  //remove the mat-elevation-z8 class to the host element
-
-
+  @HostListener('mouseleave') onMouseLeave() {
+    this.renderer.removeClass(this.el.nativeElement, 'mat-elevation-z8');
+  }
 }

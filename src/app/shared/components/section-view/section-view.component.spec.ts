@@ -1,68 +1,64 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SectionViewComponent } from './section-view.component';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { EditSectionFormComponent } from '../edit-section-form/edit-section-form.component';
+import { SectionsService } from '../../../core/services/sections.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { Section } from '../../../models/section.model';
 
 describe('SectionViewComponent', () => {
   let component: SectionViewComponent;
   let fixture: ComponentFixture<SectionViewComponent>;
+  let mockSectionsService: any;
 
   beforeEach(async () => {
+    mockSectionsService = {
+      updateSection: vi.fn(),
+      removeSection: vi.fn()
+    };
+
     await TestBed.configureTestingModule({
-      imports: [SectionViewComponent, MatCardModule, MatButtonModule, EditSectionFormComponent, NoopAnimationsModule]
+      imports: [SectionViewComponent, NoopAnimationsModule],
+      providers: [
+        { provide: SectionsService, useValue: mockSectionsService }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(SectionViewComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should create', () => {
-    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
-  it('should parse JSON string content into blocks', () => {
-    const jsonStr = JSON.stringify([{ type: 'text', textContent: 'Hello' }]);
-    const parsed = component.parseContent(jsonStr);
-    expect(Array.isArray(parsed)).toBe(true);
-    expect(parsed![0].textContent).toBe('Hello');
+  it('should start edit mode', () => {
+    component.startEdit(1);
+    expect(component.editingIndex).toBe(1);
   });
 
-  it('should return null for non-JSON content or invalid formats', () => {
-    const plainText = 'Just some text';
-    expect(component.parseContent(plainText)).toBeNull();
-  });
-
-  it('should start and cancel edit mode correctly', () => {
-    component.startEdit(0);
-    expect(component.editingIndex).toBe(0);
-    
+  it('should cancel edit mode', () => {
+    component.editingIndex = 1;
     component.cancelEdit();
     expect(component.editingIndex).toBeNull();
   });
 
-  it('should emit update event on saveEdit', () => {
-    const mockSection: Section = { id: 1, title: 'T', content: 'C' };
-    vi.spyOn(component.update, 'emit');
-    
-    component.saveEdit(mockSection, 'angular', { title: 'New T', content: 'New C' });
-    
-    expect(component.update.emit).toHaveBeenCalledWith(expect.objectContaining({
-      id: 1,
-      title: 'New T',
-      content: 'New C'
-    }));
+  it('should save edit and call updateSection', () => {
+    const section = { id: 1, title: 'Old', content: 'C' };
+    component.editingIndex = 0;
+    component.saveEdit(section, 'angular', { title: 'New', content: 'NewC' });
+    expect(mockSectionsService.updateSection).toHaveBeenCalledWith({ id: 1, title: 'New', content: 'NewC', pageName: 'angular' });
     expect(component.editingIndex).toBeNull();
   });
 
-  it('should emit remove event on deleteSection', () => {
-    vi.spyOn(component.remove, 'emit');
-    
-    component.deleteSection(42);
-    
-    expect(component.remove.emit).toHaveBeenCalledWith(42);
+  it('should delete section', () => {
+    component.deleteSection(5);
+    expect(mockSectionsService.removeSection).toHaveBeenCalledWith(5);
+  });
+
+  it('should parse content correctly', () => {
+    expect(component.parseContent('')).toBeNull();
+    const arr = [{ type: 'title', titleText: 'T' }];
+    expect(component.parseContent(arr as any)).toBe(arr);
+    expect(component.parseContent('[{"type":"title","titleText":"T"}]')).toEqual(arr);
+    expect(component.parseContent('just string')).toBeNull();
   });
 });

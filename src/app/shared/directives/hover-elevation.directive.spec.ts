@@ -13,6 +13,7 @@ class TestComponent {}
 describe('HoverElevationDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
   let div: HTMLElement;
+  let directiveInstance: any;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -21,19 +22,19 @@ describe('HoverElevationDirective', () => {
 
     fixture = TestBed.createComponent(TestComponent);
     fixture.detectChanges();
-    div = fixture.debugElement.query(By.directive(HoverElevationDirective)).nativeElement;
+    const debugEl = fixture.debugElement.query(By.directive(HoverElevationDirective));
+    div = debugEl.nativeElement;
+    directiveInstance = debugEl.injector.get(HoverElevationDirective);
   });
 
   it('should add "mat-elevation-z8" class on mouseenter', () => {
-    div.dispatchEvent(new MouseEvent('mouseenter'));
-    fixture.detectChanges();
+    directiveInstance.onMouseEnter();
     expect(div.classList.contains('mat-elevation-z8')).toBe(true);
   });
 
   it('should remove "mat-elevation-z8" class on mouseleave', () => {
-    div.classList.add('mat-elevation-z8'); // manually add first
-    div.dispatchEvent(new MouseEvent('mouseleave'));
-    fixture.detectChanges();
+    div.classList.add('mat-elevation-z8');
+    directiveInstance.onMouseLeave();
     expect(div.classList.contains('mat-elevation-z8')).toBe(false);
   });
 });

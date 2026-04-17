@@ -1,6 +1,6 @@
-import { Component, Input, OnInit, } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { Section } from '../../../models/section.model';
-
+import { BlockType, SectionBlock } from '../../../models/section-block.model';
 
 @Component({
   selector: 'app-edit-section-form',
@@ -29,116 +29,132 @@ import { Section } from '../../../models/section.model';
   styleUrls: ['./edit-section-form.component.scss']
 })
 export class EditSectionFormComponent implements OnInit {
+  @Input({ required: true }) section!: Section;
+  @Output() save = new EventEmitter<{ title: string; content: string }>();
+  @Output() cancel = new EventEmitter<void>();
 
-  @Input() section!: Section;
+  private fb = inject(FormBuilder);
 
-  // Emit the save event with the title and content
-  // Emit the cancel event when the user exits without saving
+  form = this.fb.group({
+    title: ['', Validators.required],
+    contentBlocks: this.fb.array([])
+  });
 
-
-  //Inject the FormBuilder service
-
-
-  // Create a form group with the following controls:
-  // - title: a required string control
-  // - contentBlocks: a required array control
-
-  // Return the `contentBlocks` FormArray from the form.
-  // - Cast to FormArray so you can call `push`, `removeAt`, and `clear`.
-  // - Keep this as a getter so template bindings stay clean.
-
-
-
-  ngOnInit(): void {
-    // check if the section is defined
-
-    // patch the title of the form
-
-    // initialize the blocks
-
-
+  get contentBlocks() {
+    return this.form.get('contentBlocks') as FormArray;
   }
 
-  // create a variable blocks and assign it as an empty array
-  // try to parse the section.content as a JSON string
-  // if it is an array, assign it to blocks
-  // if it is a string, parse it as a JSON string and assign it to blocks
-  // if it is not a string or array, assign it to blocks as a single text block
-  // if the parsing fails, assign it to blocks as a single text block
-  // if the parsing succeeds, assign it to blocks
-  // if the parsing succeeds, assign it to blocks
-  private initBlocks() {
+  ngOnInit() {
+    if (this.section) {
+      this.form.patchValue({
+        title: this.section.title
+      });
 
+      if (Array.isArray(this.section.content)) {
+        const blocks = this.section.content as SectionBlock[];
+        blocks.forEach(block => this.loadBlock(block));
+      } else {
+        try {
+          const parsed = JSON.parse(this.section.content);
+          if (Array.isArray(parsed)) {
+            const blocks = parsed as SectionBlock[];
+            blocks.forEach(block => this.loadBlock(block));
+          } else {
+            this.loadBlock({ type: 'text', textContent: this.section.content as string });
+          }
+        } catch {
+          this.loadBlock({ type: 'text', textContent: this.section.content as string });
+        }
+      }
+    }
   }
 
-  // Add one block into the form, optionally pre-filled with existing data.
-  // - Accept:
-  //   - `type: BlockType` (required)
-  //   - `data: any` (optional) containing any of:
-  //     - titleText, isBold, textContent, listItems
-  // - Build a FormGroup containing all fields so the template can switch by type.
-  // listItems is a FormArray of required FormControls.
-  // Use type, titleText, isBold, textContent, listItems to create the block
-  // - For list blocks, create `listItems` as a FormArray of required FormControls.
-  // - Apply validators based on type:
-  //   - 'title' -> `titleText` required
-  //   - 'text'  -> `textContent` required
-  // - Always call `updateValueAndValidity()` after changing validators.
-  // - Finally push into `this.contentBlocks`.
-  addBlock() {
+  loadBlock(blockData: SectionBlock) {
+    const block = this.fb.group({
+      type: [blockData.type, Validators.required],
+      titleText: [blockData.titleText || ''],
+      isBold: [blockData.isBold || false],
+      textContent: [blockData.textContent || ''],
+      listItems: this.fb.array([])
+    });
 
+    if (blockData.type === 'title') {
+      block.get('titleText')?.setValidators(Validators.required);
+      block.get('titleText')?.updateValueAndValidity();
+    } else if (blockData.type === 'text') {
+      block.get('textContent')?.setValidators(Validators.required);
+      block.get('textContent')?.updateValueAndValidity();
+    }
+
+    if ((blockData.type === 'ordered-list' || blockData.type === 'unordered-list') && blockData.listItems) {
+      const listArray = block.get('listItems') as FormArray;
+      blockData.listItems.forEach(item => {
+        listArray.push(new FormControl(item, Validators.required));
+      });
+      // Ensure at least one item
+      if (listArray.length === 0) {
+        listArray.push(new FormControl('', Validators.required));
+      }
+    }
+
+    this.contentBlocks.push(block);
   }
 
-  // Remove a block at the given index.
-  // - Index is 0-based.
-  // - Uses FormArray.removeAt so Angular updates bindings correctly.
-  removeBlock() {
+  addBlock(type: BlockType) {
+    const block = this.fb.group({
+      type: [type, Validators.required],
+      titleText: [''],
+      isBold: [false],
+      textContent: [''],
+      listItems: this.fb.array([])
+    });
 
+    if (type === 'title') {
+      block.get('titleText')?.setValidators(Validators.required);
+      block.get('titleText')?.updateValueAndValidity();
+    } else if (type === 'text') {
+      block.get('textContent')?.setValidators(Validators.required);
+      block.get('textContent')?.updateValueAndValidity();
+    } else if (type === 'ordered-list' || type === 'unordered-list') {
+      this.addListItem(block.get('listItems') as FormArray);
+    }
+
+    this.contentBlocks.push(block);
   }
 
-  // Add a new required list item to a list block.
-  // - Accept the list block's `listItems` FormArray.
-  // - Push FormControl('', Validators.required) so empty items keep the form invalid.
-  addListItem() {
-
+  removeBlock(index: number) {
+    this.contentBlocks.removeAt(index);
   }
 
-  // Remove a list item at a given index.
-  // - Accept the list FormArray and the item index 
-  removeListItem() {
-
+  addListItem(listItemsArr: FormArray) {
+    listItemsArr.push(new FormControl('', Validators.required));
   }
 
-  // Return the `listItems` FormArray for the block at `blockIndex`.
-  // - Used by the template to loop items and to call add/remove helpers.
-  // Accept the block index, return the `listItems` FormArray for that block.
-  getListItems() {
-
+  removeListItem(listItemsArr: FormArray, index: number) {
+    listItemsArr.removeAt(index);
   }
 
-  // Return a FormArray entry typed as a FormControl.
-  // - Helpful for `[formControl]` bindings in the template.
-  // - Accept the FormArray and an index, return `formArray.at(index) as FormControl`.
-  getFormControl() {
-
+  getListItems(blockIndex: number): FormArray {
+    return this.contentBlocks.at(blockIndex).get('listItems') as FormArray;
   }
 
-  // Submit the edit form and emit `save` if valid.
-  // - Accept `formDirective: FormGroupDirective` so you can fully reset the Material/Angular form state.
-  // - Guard with `if (this.form.valid)` so you don't persist incomplete blocks.
-  // - Serialize blocks: from value.contentBlocks to a string
+  getFormControl(formArray: FormArray, index: number): FormControl {
+    return formArray.at(index) as FormControl;
+  }
 
-  // - Emit title and content via save event
-
-  // - Reset the UI + internal state:
-  // reset formDirective, form and clear contentBlocks
   submit(): void {
+    if (this.form.valid) {
+      const value = this.form.value;
+      const serializedContent = JSON.stringify(value.contentBlocks);
 
+      this.save.emit({
+        title: value.title as string,
+        content: serializedContent
+      });
+    }
   }
 
-  // Cancel editing without saving.
-  // - Emit `cancel` so the parent can switch the UI out of edit mode.
-  cancelEdit() {
-
+  onCancel(): void {
+    this.cancel.emit();
   }
 }

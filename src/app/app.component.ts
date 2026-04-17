@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { ContentLayoutComponent } from "./layouts/content-layout/content-layout.component";
-import { NotFoundPageComponent } from "./pages/not-found-page/not-found-page.component";
-import { AuthLayoutComponent } from "./layouts/auth-layout/auth-layout.component";
+
+import { RouterOutlet } from "@angular/router";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ContentLayoutComponent, NotFoundPageComponent, AuthLayoutComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })

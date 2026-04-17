@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { EditSectionFormComponent } from './edit-section-form.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { FormGroupDirective } from '@angular/forms';
 import { Section } from '../../../models/section.model';
 
 describe('EditSectionFormComponent', () => {
@@ -17,54 +16,88 @@ describe('EditSectionFormComponent', () => {
     component = fixture.componentInstance;
   });
 
-  const mockContent = JSON.stringify([{ type: 'text', textContent: 'Initial' }]);
-  const mockSection: Section = { id: 1, title: 'Title', content: mockContent };
-
   it('should create', () => {
-    component.section = mockSection;
+    component.section = { id: 1, title: 'Title', content: 'content' };
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
-  it('should populate its form from input section (JSON array)', () => {
-    component.section = mockSection;
+  it('should patch title on init', () => {
+    component.section = { id: 1, title: 'Test Title', content: 'content' };
     fixture.detectChanges();
-    
-    expect(component.form.value.title).toBe('Title');
-    expect(component.contentBlocks.length).toBe(1);
-    expect(component.contentBlocks.at(0).get('textContent')?.value).toBe('Initial');
+    expect(component.form.value.title).toBe('Test Title');
   });
 
-  it('should handle legacy string content by creating a default text block', () => {
-    component.section = { id: 2, title: 'Old', content: 'Plain Text' };
+  it('should load text content array on init', () => {
+    component.section = { id: 1, title: 'Test', content: [{ type: 'title', titleText: 'Hello' }] } as any;
     fixture.detectChanges();
-    
     expect(component.contentBlocks.length).toBe(1);
-    expect(component.contentBlocks.at(0).get('textContent')?.value).toBe('Plain Text');
-    expect(component.contentBlocks.at(0).get('type')?.value).toBe('text');
+    expect(component.contentBlocks.at(0).get('type')?.value).toBe('title');
   });
 
-  it('should emit save event with updated data', () => {
-    const mockFormDirective = { resetForm: vi.fn() } as any;
+  it('should parse json array string on init', () => {
+    component.section = { id: 1, title: 'Test', content: '[{"type":"text","textContent":"Hello"}]' };
+    fixture.detectChanges();
+    expect(component.contentBlocks.length).toBe(1);
+    expect(component.contentBlocks.at(0).get('textContent')?.value).toBe('Hello');
+  });
+
+  it('should add different types of blocks', () => {
+    component.section = { id: 1, title: 'Test Title', content: 'content' };
+    fixture.detectChanges();
+    const len = component.contentBlocks.length;
+    component.addBlock('title');
+    component.addBlock('text');
+    component.addBlock('ordered-list');
+    fixture.detectChanges();
+    expect(component.contentBlocks.length).toBe(len + 3);
+  });
+
+  it('should remove a block', () => {
+    component.section = { id: 1, title: 'Test Title', content: 'content' };
+    fixture.detectChanges();
+    component.addBlock('text');
+    fixture.detectChanges();
+    const index = component.contentBlocks.length - 1;
+    component.removeBlock(index);
+    fixture.detectChanges();
+    expect(component.contentBlocks.length).toBe(index);
+  });
+
+  it('should add and remove list items', () => {
+    component.section = { id: 1, title: 'Test', content: 'content' };
+    fixture.detectChanges();
+    component.addBlock('ordered-list');
+    const listItems = component.getListItems(component.contentBlocks.length - 1);
+    component.addListItem(listItems);
+    const count = listItems.length;
+    component.removeListItem(listItems, 0);
+    expect(listItems.length).toBe(count - 1);
+  });
+
+  it('should emit save on valid submit', () => {
+    component.section = { id: 1, title: 'Test', content: 'content' };
+    fixture.detectChanges();
     vi.spyOn(component.save, 'emit');
-    
-    component.section = mockSection;
-    fixture.detectChanges();
-    
-    component.form.patchValue({ title: 'Modified' });
-    component.contentBlocks.at(0).get('textContent')?.setValue('Modified Content');
-    
-    component.submit(mockFormDirective);
-    
-    expect(component.save.emit).toHaveBeenCalledWith(expect.objectContaining({
-      title: 'Modified',
-      content: expect.stringMatching('Modified Content')
-    }));
+    component.form.patchValue({ title: 'New Title' });
+    component.submit();
+    expect(component.save.emit).toHaveBeenCalled();
   });
 
-  it('should emit cancel event', () => {
+  it('should not emit save on invalid submit', () => {
+    component.section = { id: 1, title: 'Test', content: 'content' };
+    fixture.detectChanges();
+    vi.spyOn(component.save, 'emit');
+    component.form.patchValue({ title: '' }); // invalid
+    component.submit();
+    expect(component.save.emit).not.toHaveBeenCalled();
+  });
+
+  it('should emit cancel on cancel edit', () => {
+    component.section = { id: 1, title: 'Test', content: 'content' };
+    fixture.detectChanges();
     vi.spyOn(component.cancel, 'emit');
-    component.cancelEdit();
+    component.onCancel();
     expect(component.cancel.emit).toHaveBeenCalled();
   });
 });

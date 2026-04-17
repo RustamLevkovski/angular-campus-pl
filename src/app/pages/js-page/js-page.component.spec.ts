@@ -1,29 +1,32 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { JsPageComponent } from './js-page.component';
-import { SectionViewComponent } from '../../shared/components/section-view/section-view.component';
-import { DynamicSectionFormComponent } from '../../shared/components/dynamic-section-form/dynamic-section-form.component';
+import { MenuService } from '../../core/services/menu.service';
+import { SectionsService } from '../../core/services/sections.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { of } from 'rxjs';
 
 describe('JsPageComponent', () => {
   let component: JsPageComponent;
   let fixture: ComponentFixture<JsPageComponent>;
-  let store: { [key: string]: string } = {};
+  let mockMenuService: any;
+  let mockSectionsService: any;
 
   beforeEach(async () => {
-    store = {};
-
-    const localStorageStub: Storage = {
-      getItem: (key: string) => store[key] ?? null,
-      setItem: (key: string, value: string) => { store[key] = value; },
-      removeItem: (key: string) => { delete store[key]; },
-      clear: () => { store = {}; },
-      key: (index: number) => Object.keys(store)[index] ?? null,
-      length: 0,
+    mockMenuService = {
+      setCurrentPage: vi.fn()
     };
-    Object.defineProperty(window, 'localStorage', { value: localStorageStub, writable: true });
+    mockSectionsService = {
+      ensureInitialSections: vi.fn(),
+      getSectionsForPage: vi.fn().mockReturnValue(of([{ id: 1, title: 'Test Section', content: 'test content' }])),
+      addSection: vi.fn()
+    };
 
     await TestBed.configureTestingModule({
-      imports: [JsPageComponent, SectionViewComponent, DynamicSectionFormComponent, NoopAnimationsModule]
+      imports: [JsPageComponent, NoopAnimationsModule],
+      providers: [
+        { provide: MenuService, useValue: mockMenuService },
+        { provide: SectionsService, useValue: mockSectionsService }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(JsPageComponent);
@@ -31,24 +34,25 @@ describe('JsPageComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create and load sections', () => {
     expect(component).toBeTruthy();
+    expect(mockMenuService.setCurrentPage).toHaveBeenCalledWith('javascript');
+    expect(mockSectionsService.ensureInitialSections).toHaveBeenCalled();
+    component.sections$.subscribe(sections => {
+      expect(sections.length).toBe(1);
+    });
   });
 
-  it('should add a new section for javascript and save to localStorage', () => {
-    component.onSectionCreated({ title: 'New JS', content: 'Content' });
-
-    expect(component.sections.length).toBe(1);
-    expect(component.sections[0].title).toBe('New JS');
-    expect(store['extra_sections_javascript']).toBeDefined();
+  it('should toggle form', () => {
+    expect(component.showForm).toBe(false);
+    const button = fixture.nativeElement.querySelector('button');
+    button.click();
+    expect(component.showForm).toBe(true);
   });
 
-  it('should remove an extra section from javascript', () => {
-    component.addSection('javascript', 'To Remove JS', 'Content');
-    const id = component.sections[0].id;
-
-    component.removeSection(id);
-
-    expect(component.sections.length).toBe(0);
+  it('should add section', () => {
+    component.onSectionCreated({ title: 'New', content: 'C' });
+    expect(mockSectionsService.addSection).toHaveBeenCalledWith('javascript', 'New', 'C');
+    expect(component.showForm).toBe(false);
   });
 });
