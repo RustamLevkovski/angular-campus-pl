@@ -1,107 +1,100 @@
-<!--
-  Key bindings:
-  - [formGroup]="form" wires the template to the component FormGroup
-  - (ngSubmit)="submit(formDirective)" calls the submit handler (only emits when valid)
-  - #formDirective="ngForm" gives access to FormGroupDirective so submit() can fully reset state
-
-  Block rendering:
-  - `contentBlocks` is a FormArray of FormGroups (one per block)
-  - We loop `contentBlocks.controls` and switch UI by block.get('type')?.value
-  - List blocks use a nested FormArray (`listItems`) and helpers:
-    - getListItems(blockIndex)
-    - getFormControl(formArray, index)
--->
-<form [formGroup]="form" (ngSubmit)="submit(formDirective)" #formDirective="ngForm"
-  class="edit-section-form flex flex-col gap-4">
-  <!-- Header row: title + close button (triggers cancelEdit()) -->
+<!-- 1. Bind [formGroup] to the form property, bind (ngSubmit) to submit(formDirective), add local ref #formDirective="ngForm" -->
+<form class="edit-section-form flex flex-col gap-4">
   <div class="flex justify-between items-center">
     <h3>Edit Section</h3>
-    <button mat-icon-button (click)="cancelEdit()"><mat-icon>close</mat-icon></button>
+    <!-- 2. Bind (click) to cancelEdit() -->
+    <button mat-icon-button><mat-icon>close</mat-icon></button>
   </div>
-  
-  <!-- Section title control (required) -->
+
+  <!-- 3. Bind the title input with formControlName="title" -->
   <mat-form-field class="w-full">
     <mat-label>Section Title</mat-label>
-    <input matInput formControlName="title" />
+    <input matInput />
   </mat-form-field>
 
-  <!-- Blocks container: FormArray named `contentBlocks` -->
-  <div class="blocks-container flex flex-col gap-4" formArrayName="contentBlocks">
-    @for (block of contentBlocks.controls; track block; let blockIndex = $index) {
-    <mat-card class="block-card p-4 relative" [formGroupName]="blockIndex">
-      <!-- Remove block button (does not submit the form) -->
-      <button mat-icon-button color="warn" class="absolute top-2 right-2" type="button"
-        (click)="removeBlock(blockIndex)">
+  <!-- 4. Bind the wrapper div with formArrayName="contentBlocks" -->
+  <div class="blocks-container flex flex-col gap-4">
+    <!-- 5. Use @for to iterate over contentBlocks.controls, track by block, expose blockIndex via let blockIndex = $index -->
+
+    <!-- 6. Bind [formGroupName] to blockIndex on the mat-card -->
+    <mat-card class="block-card p-4 relative">
+      <!-- 7. Bind (click) to removeBlock(blockIndex) -->
+      <button mat-icon-button color="warn" class="absolute top-2 right-2" type="button">
         <mat-icon>delete</mat-icon>
       </button>
 
       <div class="block-content mt-6">
-        <!-- TITLE block UI -->
-        @if (block.get('type')?.value === 'title') {
+        <!-- 8. Use @if to conditionally render block UI based on block.get('type')?.value -->
+
+        <!-- 8a. If block type is 'title': -->
+
         <div class="flex flex-col gap-2">
-          <mat-checkbox formControlName="isBold">Bold Title</mat-checkbox>
+          <!-- 9. Bind mat-checkbox with formControlName="isBold" -->
+          <mat-checkbox>Bold Title</mat-checkbox>
           <mat-form-field class="w-full">
             <mat-label>Title Text</mat-label>
-            <input matInput formControlName="titleText" />
+            <!-- 10. Bind input with formControlName="titleText" -->
+            <input matInput />
           </mat-form-field>
         </div>
-        }
 
-        <!-- TEXT block UI -->
-        @if (block.get('type')?.value === 'text') {
+
+        <!-- 8b. If block type is 'text': -->
+
         <mat-form-field class="w-full">
           <mat-label>Text Content</mat-label>
-          <textarea matInput rows="4" formControlName="textContent"></textarea>
+          <!-- 11. Bind textarea with formControlName="textContent" -->
+          <textarea matInput rows="4"></textarea>
         </mat-form-field>
-        }
 
-        <!-- LIST block UI (ordered or unordered) -->
-        @if (block.get('type')?.value === 'ordered-list' || block.get('type')?.value === 'unordered-list') {
-        <div class="list-container flex flex-col gap-2" formArrayName="listItems">
-          <h4>{{ block.get('type')?.value === 'ordered-list' ? 'Ordered List' : 'Unordered List' }}</h4>
-          @for (item of getListItems(blockIndex).controls; track item; let itemIndex = $index) {
+
+        <!-- 8c. If block type is 'ordered-list' OR 'unordered-list': -->
+
+        <!-- 12. Bind the div with formArrayName="listItems" -->
+        <div class="list-container flex flex-col gap-2">
+          <!-- 13. Output 'Ordered List' or 'Unordered List' based on the block type -->
+          <h4>{{ "" }}</h4>
+          <!-- 14. Use @for to iterate getListItems(blockIndex).controls, track by item, expose itemIndex via let itemIndex = $index -->
+
           <div class="flex gap-2 items-center">
             <mat-form-field class="flex-grow">
-              <mat-label>Item {{ itemIndex + 1 }}</mat-label>
-              <input matInput [formControl]="getFormControl(getListItems(blockIndex), itemIndex)" />
+              <!-- 15. Output itemIndex + 1 -->
+              <mat-label>Item </mat-label>
+              <!-- 16. Bind input [formControl] to getFormControl(getListItems(blockIndex), itemIndex) -->
+              <input matInput />
             </mat-form-field>
-            <!-- Remove one list item -->
-            <button mat-icon-button color="warn" type="button"
-              (click)="removeListItem(getListItems(blockIndex), itemIndex)">
+            <!-- 17. Bind (click) to removeListItem(getListItems(blockIndex), itemIndex) -->
+            <button mat-icon-button color="warn" type="button">
               <mat-icon>remove_circle</mat-icon>
             </button>
           </div>
-          }
-          <!-- Add one list item -->
-          <button mat-button color="primary" type="button" (click)="addListItem(getListItems(blockIndex))">
+
+          <!-- 18. Bind (click) to addListItem(getListItems(blockIndex)) -->
+          <button mat-button color="primary" type="button">
             <mat-icon>add</mat-icon> Add List Item
           </button>
         </div>
-        }
+
       </div>
     </mat-card>
-    }
+
   </div>
 
-  <!-- Add-block actions: creates a new block FormGroup in the FormArray -->
+  <!-- 19. Bind (click) for each button to addBlock() with the correct block type argument ('title', 'text', 'ordered-list', 'unordered-list') -->
   <div class="add-block-actions flex gap-2 flex-wrap mb-4">
-    <button mat-stroked-button type="button" (click)="addBlock('title')"><mat-icon>title</mat-icon> Add Title</button>
-    <button mat-stroked-button type="button" (click)="addBlock('text')"><mat-icon>notes</mat-icon> Add Text Segment</button>
-    <button mat-stroked-button type="button"
-      (click)="addBlock('ordered-list')"><mat-icon>format_list_numbered</mat-icon> Add Ordered List</button>
-    <button mat-stroked-button type="button"
-      (click)="addBlock('unordered-list')"><mat-icon>format_list_bulleted</mat-icon> Add Unordered List</button>
+    <button mat-stroked-button type="button"><mat-icon>title</mat-icon> Add Title</button>
+    <button mat-stroked-button type="button"><mat-icon>notes</mat-icon> Add Text Segment</button>
+    <button mat-stroked-button type="button"><mat-icon>format_list_numbered</mat-icon> Add Ordered List</button>
+    <button mat-stroked-button type="button"><mat-icon>format_list_bulleted</mat-icon> Add Unordered List</button>
   </div>
 
-  <!-- Form actions:
-    - Submit: triggers ngSubmit, disabled while form.invalid
-    - Cancel: triggers cancelEdit() (no submission)
-  -->
   <div class="actions flex gap-2">
-    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+    <!-- 20. Bind [disabled] to form.invalid -->
+    <button mat-raised-button color="primary" type="submit">
       Update Section
     </button>
-    <button mat-button type="button" (click)="cancelEdit()">
+    <!-- 21. Bind (click) to cancelEdit() -->
+    <button mat-button type="button">
       Cancel
     </button>
   </div>

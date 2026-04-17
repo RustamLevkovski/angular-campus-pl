@@ -1,22 +1,3 @@
-<!--
-  HINTS / INSTRUCTIONS (SectionView template)
-
-  Goal: render a list of `sections` with a per-item toggle between:
-  - View mode (default): show title + rendered content blocks + Edit/Remove buttons
-  - Edit mode: show <app-edit-section-form> for that section
-
-  How edit mode works:
-  - `editingIndex` stores the index currently being edited (or null)
-  - Clicking "Edit" calls startEdit($index)
-  - Edit form emits:
-    - (save) -> saveEdit(section, section.pageName || 'angular', $event)
-    - (cancel) -> cancelEdit()
-
-  How content is rendered:
-  - `parseContent(section.content)` tries to parse JSON block arrays
-  - If blocks parse successfully, we render each block by `block.type`
-  - Otherwise we fall back to printing `section.content` as plain text
--->
 <div class="section-view">
   <div class="grid gap-4 ">
     @if (sections.length) {
@@ -27,17 +8,20 @@
       <mat-card-header class="flex justify-between items-center w-full">
         <mat-card-title>{{ section.title }}</mat-card-title>
         <div class="actions">
-          <!-- Edit: switches this card into edit mode -->
-          <button mat-button color="primary" (click)="startEdit($index)">Edit</button>
-          <!-- Remove: asks parent to delete the section by id -->
-          <button mat-button color="warn" (click)="deleteSection(section.id)">Remove</button>
+          <!-- Add click handling via startEdit method -->
+          <button mat-button color="primary">Edit</button>
+          <!-- Add click handling via deleteSection method -->
+          <button mat-button color="warn">Remove</button>
         </div>
       </mat-card-header>
       <mat-card-content class="mt-4 flex flex-col gap-4">
-        <!-- Try to parse structured blocks; if null, show plain text content -->
-        @if (parseContent(section.content); as blocks) {
+        <!-- Use if block to check if content is valid via parseContent method. Use "as blocks" type annotation. 
+        If content invalid, show plain text content: {{ section.content }} in paragraph with whitespace-pre-wrap class  
+        -->
+        <!-- Replace existing statement in for block to dynamic rending block of blocks.  -->
+        <!-- Remove existing if block with asArray(section.content); as blocks -->
+        @if(asArray(section.content); as blocks){
         @for (block of blocks; track $index) {
-        <!-- TITLE block -->
         @if (block.type === 'title') {
         <h3 [class.font-bold]="block.isBold" [class.text-xl]="block.isBold" [class.text-lg]="!block.isBold">{{
           block.titleText }}</h3>
@@ -63,23 +47,19 @@
         </ul>
         }
         }
-        } @else {
-        <!-- Fallback: legacy / non-JSON content -->
-        <p class="whitespace-pre-wrap">{{ section.content }}</p>
         }
       </mat-card-content>
-      }
 
-      <!-- Edit mode: only when `editingIndex` matches this card index -->
-      @if (editingIndex === $index) {
-      <app-edit-section-form [section]="section" (save)="saveEdit(section, section.pageName || 'angular', $event)"
-        (cancel)="cancelEdit()"></app-edit-section-form>
+
+      <!-- Use if block to check if editingIndex is equal to current index. If it is, show app-edit-section-form. 
+        If content invalid, show plain text "No content" in paragraph.
+        Pass to app-edit-section-form the current section, add click handling for emit events: 
+        save = saveEdit(section, section.pageName || 'angular', $event)
+        cancel = cancelEdit()
+        -->
       }
     </mat-card>
     }
-    } @else {
-    <!-- Empty state -->
-    <p>No content yet.</p>
     }
   </div>
 </div>

@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { Component, Input, OnInit, } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormArray, FormBuilder, FormControl, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule, } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { Section } from '../../../models/section.model';
-import { BlockType } from '../../../models/section-block.model';
+
 
 @Component({
   selector: 'app-edit-section-form',
@@ -29,9 +29,9 @@ import { BlockType } from '../../../models/section-block.model';
   styleUrls: ['./edit-section-form.component.scss']
 })
 export class EditSectionFormComponent implements OnInit {
-  
+
   @Input() section!: Section;
-    
+
   // Emit the save event with the title and content
   // Emit the cancel event when the user exits without saving
 
@@ -52,21 +52,21 @@ export class EditSectionFormComponent implements OnInit {
   ngOnInit(): void {
     // check if the section is defined
 
-      // patch the title of the form
-      
-      // initialize the blocks
-    
-    
+    // patch the title of the form
+
+    // initialize the blocks
+
+
   }
 
- // create a variable blocks and assign it as an empty array
- // try to parse the section.content as a JSON string
- // if it is an array, assign it to blocks
- // if it is a string, parse it as a JSON string and assign it to blocks
- // if it is not a string or array, assign it to blocks as a single text block
- // if the parsing fails, assign it to blocks as a single text block
- // if the parsing succeeds, assign it to blocks
- // if the parsing succeeds, assign it to blocks
+  // create a variable blocks and assign it as an empty array
+  // try to parse the section.content as a JSON string
+  // if it is an array, assign it to blocks
+  // if it is a string, parse it as a JSON string and assign it to blocks
+  // if it is not a string or array, assign it to blocks as a single text block
+  // if the parsing fails, assign it to blocks as a single text block
+  // if the parsing succeeds, assign it to blocks
+  // if the parsing succeeds, assign it to blocks
   private initBlocks() {
 
   }
@@ -93,34 +93,34 @@ export class EditSectionFormComponent implements OnInit {
   // - Index is 0-based.
   // - Uses FormArray.removeAt so Angular updates bindings correctly.
   removeBlock() {
- 
+
   }
 
   // Add a new required list item to a list block.
   // - Accept the list block's `listItems` FormArray.
   // - Push FormControl('', Validators.required) so empty items keep the form invalid.
   addListItem() {
-   
+
   }
 
   // Remove a list item at a given index.
   // - Accept the list FormArray and the item index 
   removeListItem() {
-   
+
   }
 
   // Return the `listItems` FormArray for the block at `blockIndex`.
   // - Used by the template to loop items and to call add/remove helpers.
   // Accept the block index, return the `listItems` FormArray for that block.
   getListItems() {
-    
+
   }
 
   // Return a FormArray entry typed as a FormControl.
   // - Helpful for `[formControl]` bindings in the template.
   // - Accept the FormArray and an index, return `formArray.at(index) as FormControl`.
   getFormControl() {
-   
+
   }
 
   // Submit the edit form and emit `save` if valid.
@@ -129,7 +129,7 @@ export class EditSectionFormComponent implements OnInit {
   // - Serialize blocks: from value.contentBlocks to a string
 
   // - Emit title and content via save event
- 
+
   // - Reset the UI + internal state:
   // reset formDirective, form and clear contentBlocks
   submit(): void {
@@ -139,6 +139,6 @@ export class EditSectionFormComponent implements OnInit {
   // Cancel editing without saving.
   // - Emit `cancel` so the parent can switch the UI out of edit mode.
   cancelEdit() {
-   
+
   }
 }
