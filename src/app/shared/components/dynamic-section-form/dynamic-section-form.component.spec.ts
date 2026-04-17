@@ -41,7 +41,6 @@ describe('DynamicSectionFormComponent', () => {
     fixture.detectChanges();
     
     component.removeBlock(0);
-    fixture.detectChanges();
     
     expect(component.contentBlocks.length).toEqual(1);
     expect(component.contentBlocks.at(0).get('type')?.value).toBe('title');
@@ -83,11 +82,9 @@ describe('DynamicSectionFormComponent', () => {
     const listItems = component.getListItems(0);
     
     component.addListItem(listItems);
-    fixture.detectChanges();
     expect(listItems.length).toBe(2); // Starts with 1 by default
     
     component.removeListItem(listItems, 0);
-    fixture.detectChanges();
     expect(listItems.length).toBe(1);
   });
 });

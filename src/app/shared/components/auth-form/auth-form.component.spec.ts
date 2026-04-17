@@ -33,23 +33,22 @@ describe('AuthFormComponent', () => {
 
     fixture = TestBed.createComponent(AuthFormComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => { 
+    fixture.detectChanges();
     expect(component).toBeTruthy(); 
   });
 
   it('should get title correctly', () => {
     component.mode = 'login';
-    fixture.detectChanges();
     expect(component.title).toBe('Login');
     component.mode = 'register';
-    fixture.detectChanges();
     expect(component.title).toBe('Sign up');
   });
 
   it('should stop submit on invalid form', () => {
+    fixture.detectChanges();
     component.form.controls.email.setValue('');
     component.form.controls.email.markAsTouched();
     component.form.controls.password.markAsTouched();
@@ -60,6 +59,7 @@ describe('AuthFormComponent', () => {
 
   it('should stop submit on register password mismatch', () => {
     component.mode = 'register';
+    fixture.detectChanges();
     component.form.controls.email.setValue('test@test.com');
     component.form.controls.password.setValue('123456');
     component.form.controls.confirmPassword.setValue('654321');
@@ -71,6 +71,7 @@ describe('AuthFormComponent', () => {
   it('should submit login form successfully', () => {
     vi.spyOn(component.submitted, 'emit');
     component.mode = 'login';
+    fixture.detectChanges();
     component.form.controls.email.setValue('test@test.com');
     component.form.controls.password.setValue('123456');
     component.loading = true;
@@ -84,6 +85,7 @@ describe('AuthFormComponent', () => {
   it('should handle login error', () => {
     mockAuthService.login.mockReturnValue(throwError(() => new Error('Error msg')));
     component.mode = 'login';
+    fixture.detectChanges();
     component.form.controls.email.setValue('test@test.com');
     component.form.controls.password.setValue('123456');
     component.onSubmit();
@@ -94,6 +96,7 @@ describe('AuthFormComponent', () => {
     vi.spyOn(component.submitted, 'emit');
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {});
     component.mode = 'register';
+    fixture.detectChanges();
     component.form.controls.email.setValue('test@test.com');
     component.form.controls.password.setValue('123456');
     component.form.controls.confirmPassword.setValue('123456');
