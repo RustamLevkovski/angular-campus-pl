@@ -14,5 +14,8 @@
   </app-dynamic-section-form>
   }
 
-  <app-section-view [sections]="(sections$ | async) ?? []"></app-section-view>
+ 
+  <!-- Remove  update and remove event bindings and modify sections binding to use sections$ via async pipe and if null - empty array-->
+  <app-section-view [sections]="sections" (update)="updateSection($event)" (remove)="removeSection($event)"></app-section-view>
+
 </section>

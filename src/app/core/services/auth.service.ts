@@ -4,26 +4,20 @@ import { delay } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  login(email: string, pass: string): Observable<string> {
-    const userStr = localStorage.getItem('angularCampus.user');
-
-    if (email === 'admin@devhub.com' && pass === 'password') {
-      return of('fake-jwt-token-admin').pipe(delay(100));
-    }
-
-    if (!userStr) {
-      return throwError(() => new Error('User not found. Please register.')).pipe(delay(100));
-    }
-
-    try {
-      const user = JSON.parse(userStr);
-      if (user.email === email && user.password === pass) {
-        return of('fake-jwt-token-user').pipe(delay(100));
-      } else {
-        return throwError(() => new Error('Invalid email or password')).pipe(delay(100));
-      }
-    } catch (e) {
-      return throwError(() => new Error('Failed to parse user data')).pipe(delay(100));
-    }
-  }
+  // - add parameters to this method:
+  //   - email: string
+  //   - pass: string
+  //
+  // Steps to implement:
+  // - Read the saved user JSON string from `localStorage` using the key `angularCampus.user`.
+  // - First, handle the hardcoded admin shortcut:
+  //   if credentials match `admin@devhub.com` / `password`, return an Observable token.
+  // - If there is no saved user in storage, return an Observable error telling the user to register.
+  // - Parse the stored JSON inside a `try` block.
+  // - Compare parsed `user.email` and `user.password` with the method parameters.
+  // - If they match, return an Observable success token for a normal user.
+  // - If they do not match, return an Observable error for invalid credentials.
+  // - In `catch`, return an Observable error when parsing fails.
+  // - Add a small `delay(...)` to each returned Observable so the flow simulates a real async request.
+  login() {}
 }

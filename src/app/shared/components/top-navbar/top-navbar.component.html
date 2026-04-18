@@ -4,7 +4,8 @@
   </div>
   <nav class="top-navbar__nav">
     @for (link of links; track link.label) {
-    <a [routerLink]="link.url" routerLinkActive="active">{{ link.label }}</a>
+    <!-- Apply bind link.url to routerLink attr. Set routerLinkActive="active" -->
+    <a>{{ link.label }}</a>
     }
   </nav>
 </header>

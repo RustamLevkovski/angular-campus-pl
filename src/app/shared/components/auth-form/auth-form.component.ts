@@ -1,13 +1,12 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import {  ReactiveFormsModule} from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { AuthService } from '../../../core/services/auth.service';
+
 
 @Component({
   selector: 'app-auth-form',
@@ -15,7 +14,6 @@ import { AuthService } from '../../../core/services/auth.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -27,60 +25,46 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class AuthFormComponent {
   @Input() mode: 'login' | 'register' = 'login';
-  @Output() submitted = new EventEmitter<{ email: string; password: string; mode: 'login' | 'register' }>();
+  // Modify submitted Event Emitter to emit the email and password and mode
+  @Output() submitted = new EventEmitter<{ mode: 'login' | 'register' }>();
 
-  private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
-  private router = inject(Router);
+// Inject the FormBuilder, AuthService, and Router
+
 
   loading = false;
   error: string | null = null;
 
-  form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    confirmPassword: ['']
-  });
+  // Create a form group with the following controls:
+  // - email with required and email validators
+  // - password with required and minlength(6) validators
+  // - confirmPassword with required validators
+
 
   get title(): string {
     return this.mode === 'login' ? 'Login' : 'Sign up';
   }
 
-  onSubmit(): void {
-    this.form.markAllAsTouched();
-    if (this.form.invalid) {
-      return;
-    }
-
-    const { email, password, confirmPassword } = this.form.value;
-    if (this.mode === 'register' && password !== confirmPassword) {
-      this.error = 'Passwords do not match.';
-      return;
-    }
-
-    this.error = null;
-    this.loading = true;
-
-    const emailValue = email as string;
-    const passwordValue = password as string;
-
-    if (this.mode === 'login') {
-      this.authService.login(emailValue, passwordValue).subscribe({
-        next: () => {
-          this.loading = false;
-          this.submitted.emit({ email: emailValue, password: passwordValue, mode: this.mode });
-          this.router.navigate(['/angular']);
-        },
-        error: (err: Error) => {
-          this.loading = false;
-          this.error = err.message || 'Login failed.';
-        }
-      });
-    } else {
-      localStorage.setItem('angularCampus.user', JSON.stringify({ email: emailValue, password: passwordValue }));
-      this.loading = false;
-      this.submitted.emit({ email: emailValue, password: passwordValue, mode: this.mode });
-      this.router.navigate(['/auth/login']);
-    }
+  // Modify onSubmit method to emit the email and password and mode
+  onSubmit(event: any) {
+    //remove the default behavior
+    event.preventDefault();
+    this.submitted.emit({ mode: this.mode });
+//1. mark all as touched
+//2. check if the form is invalid
+//3. if invalid, return
+//4. if valid, get the email and password values from the form
+//5. if mode is register, check if the password and confirm password match and if not, set the error to 'Passwords do not match.' and return
+//6. if they don't match, set the error to 'Passwords do not match.' and return
+//7. if they match, set the error to null and loading to true. 
+// 8. Create constants for the email and password values
+// 9. If mode is login, call the authService.login method with the email and password values
+//8. Subscribe to the authService.login method and handle the response
+// 9. Use next, error and complete callbacks to handle the response
+// 10. In the next callback, set the loading to false and navigate to the angular page and emit the email and password and mode
+// 11. In the error callback, set the error to the error message and loading to false and emit the error message
+// 12. If mode isn't 'login' - set item to localStorage with the key 'angularCampus.user' and the value of the email and password values
+// 13. Set the loading to false and emit the email and password and mode
+// 14. Navigate to the login page
   }
+
 }

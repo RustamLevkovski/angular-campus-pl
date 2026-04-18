@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { DynamicSectionFormComponent } from '../../shared/components/dynamic-section-form/dynamic-section-form.component';
@@ -16,30 +16,103 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrls: ['./js-page.component.scss']
 })
 export class JsPageComponent implements OnInit {
-  private menuService = inject(MenuService);
-  private sectionsService = inject(SectionsService);
+   // Steps to implement:
+  // - Inject the `MenuService` and `SectionsService` using the `inject(...)` function.
+  // - Mark them as `private readonly` so only this component can use them and the reference cannot be reassigned.
 
-  sections$!: Observable<Section[]>;
+
+  // Steps to implement:
+  // Replace existing logic, are related to the sections input: with the following: 
+  // create a sections$ property of type Observable<Section[]> to store the sections for this page.
+  @Input() set sections(value: Section[]) {
+    this._initialSections = value;
+    this.combineSections();
+  }
+  get sections(): Section[] {
+    return this._allSections;
+  }
+
+  private _initialSections: Section[] = [];
+  private _allSections: Section[] = [];
+  private _extraSections: Section[] = [];
+  private lastId = 0;
+
   showForm = false;
 
   ngOnInit(): void {
-    const pageName = 'javascript';
-    this.menuService.setCurrentPage(pageName);
-    this.sectionsService.ensureInitialSections(pageName, [
-      {
-        title: 'ES6+ Features',
-        content: 'Let, const, arrow functions, classes, and modules.'
-      },
-      {
-        title: 'Asynchronous JS',
-        content: 'Callbacks, Promises, async/await, and event loop basics.'
-      }
-    ]);
-    this.sections$ = this.sectionsService.getSectionsForPage(pageName);
+    // 1. Steps to implement:
+    // create a pageName property of type string to store the name of the page - set it to 'angular'.
+   
+    // 2. Steps to implement:
+    // use the menuService to set the current page to the pageName.
+  
+  
+// 3. Steps to implement:
+// use the sectionsService to ensure the initial sections for the page are loaded.
+// add parameters to this method:
+//   - pageName: string
+// second parameter is an array of sections with mock data:
+// { title: 'ES6+ Features', content: 'Let, const, arrow functions, classes, and modules.' },
+// { title: 'Asynchronous JS', content: 'Callbacks, Promises, async/await, and event loop basics.' }
+
+
+// 4. Steps to implement:
+// use the sectionsService method getSectionsForPage with the pageName to get the sections and assign it to the sections$ property.
+ 
   }
 
   onSectionCreated(event: { title: string; content: string }): void {
-    this.sectionsService.addSection('javascript', event.title, event.content);
+    // Steps to implement:
+    // use the sectionsService method addSection with the pageName and the event to add the section.
+    this.addSection('javascript', event.title, event.content); 
     this.showForm = false;
+  }
+
+  // move it to the sectionsService
+  addSection(pageName: string, title: string, content: string): void {
+    const id = this.generateId();
+    const newSection: Section = { id, pageName, title, content };
+    this._extraSections.push(newSection);
+    this.saveExtraSections();
+  }
+
+    // move it to the sectionsService
+  private generateId(): number {
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 1000);
+    const idString = `${timestamp.toString().slice(-6)}${random}`;
+    let id = Number(idString);
+    
+    if (id <= this.lastId) {
+       id = this.lastId + 1;
+    }
+    this.lastId = id;
+    return id;
+  }
+
+    // move it to the sectionsService
+  updateSection(section: Section): void {
+    const index = this._extraSections.findIndex(s => s.id === section.id);
+    if (index !== -1) {
+      this._extraSections[index] = section;
+      this.saveExtraSections();
+    }
+  }
+
+    // move it to the sectionsService
+  removeSection(id: number): void {
+    this._extraSections = this._extraSections.filter(s => s.id !== id);
+    this.saveExtraSections();
+  }
+
+  // remove it
+  private saveExtraSections(): void {
+    localStorage.setItem('extra_sections_angular', JSON.stringify(this._extraSections));
+    this.combineSections();
+  }
+
+  // remove it
+  private combineSections(): void {
+    this._allSections = [...this._initialSections, ...this._extraSections];
   }
 }

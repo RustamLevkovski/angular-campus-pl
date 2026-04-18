@@ -1,4 +1,4 @@
-import { Component, Input, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, inject, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Section } from '../../../models/section.model';
 import { SectionBlock } from '../../../models/section-block.model';
@@ -21,10 +21,14 @@ import { EditSectionFormComponent } from '../edit-section-form/edit-section-form
 })
 export class SectionViewComponent {
   @Input() sections: Section[] = [];
+  // Remove output props
+  @Output() update = new EventEmitter<Section>();
+  @Output() remove = new EventEmitter<number>();
 
   editingIndex: number | null = null;
 
-  private sectionsService = inject(SectionsService);
+  // Inject section service
+
   private cdr = inject(ChangeDetectorRef);
 
   startEdit(index: number): void {
@@ -44,13 +48,17 @@ export class SectionViewComponent {
       title: event.title,
       content: event.content
     };
-    this.sectionsService.updateSection(updatedSection as any);
+    // Replace update.emit to updateSection method from section service, pass updatedSection as any
+    this.update.emit(updatedSection);
+
     this.editingIndex = null;
     this.cdr.detectChanges();
   }
 
   deleteSection(id: number): void {
-    this.sectionsService.removeSection(id);
+    // Replace remove.emit to removeSectionMethod from section service
+    this.remove.emit(id);
+
   }
 
   parseContent(content: string | SectionBlock[]): SectionBlock[] | null {

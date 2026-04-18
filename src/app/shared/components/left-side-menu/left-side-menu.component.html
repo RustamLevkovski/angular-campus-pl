@@ -1,11 +1,16 @@
+<!-- Inside aside tag with class left-side-menu use if block
+Inside if block condition - pass $items$ via async pipe as items
+-->
 <aside class="left-side-menu">
-    @if (items$ | async; as items) {
+
     <ul>
-        @for (item of items; track item.label) {
+        <!-- Use for loop for render item.label  -->
+     
         <li>
-            <a [href]="item.anchor">{{ item.label }}</a>
+            <!-- Bind item.anchor to href attr -->
+            <a>{{ "" }}</a>
         </li>
-        }
+        
     </ul>
-    }
+    
 </aside>

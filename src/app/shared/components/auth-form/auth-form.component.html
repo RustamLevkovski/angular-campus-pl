@@ -1,37 +1,46 @@
 <mat-card class="auth-card">
+  <!-- Display dynamic title based on auth mode -->
   <h2 class="auth-title">{{ title }}</h2>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+  <!-- Bind form to FormGroup and use onSubmit method for handling ngSubmit event -->
+  <form class="auth-form">
+    <!-- Email input field -->
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>Email</mat-label>
-      <input matInput type="email" formControlName="email" />
-      @if (form.get('email')?.hasError('required')) {
-      <mat-error>Email is required</mat-error>
-      }
-      @if (form.get('email')?.hasError('email')) {
-      <mat-error>Enter a valid email</mat-error>
-      }
+      <!-- Pass email as formControlName -->
+      <input matInput type="email" />
+      <!-- Use @if to check if email control has 'required' validation error -->
+      <!-- Use mat-error to display message: "Email is required" -->
+
+
+      <!-- Use @if to check if email format is invalid -->
+      <!-- Use mat-error to display message: "Enter a valid email" -->
+
     </mat-form-field>
 
+    <!-- Password input field -->
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>Password</mat-label>
-      <input matInput type="password" formControlName="password" />
-      @if (form.get('password')?.hasError('required')) {
-      <mat-error>Password is required</mat-error>
-      }
-      @if (form.get('password')?.hasError('minlength')) {
-      <mat-error>
-        Password must be at least 6 characters
-      </mat-error>
-      }
+      <!-- Pass password as formControlName -->
+      <input matInput type="password" />
+      <!-- Show required validation message for password -->
+      <!-- Use mat-error to display message: "Password is required" -->
+      
+
+      <!-- Show minlength validation message for password -->
+      <!-- Use mat-error to display message: "Password must be at least 6 characters" -->
+
     </mat-form-field>
 
+    <!-- Show confirm password only in register mode -->
     @if (mode === 'register') {
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>Confirm password</mat-label>
-      <input matInput type="password" formControlName="confirmPassword" />
+      <!-- Pass confirmPassword as formControlName -->
+      <input matInput type="password"  />
     </mat-form-field>
     }
+
 
     @if (error) {
     <div class="error-text">
@@ -40,23 +49,30 @@
     }
 
     <button mat-raised-button color="primary" type="submit" [disabled]="loading">
+
       @if (!loading) {
       {{ mode === 'login' ? 'Login' : 'Sign up' }}
       } @else {
+      <!-- Show spinner while request is loading -->
       <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner>
       }
     </button>
   </form>
 
+  <!-- Footer links based on current mode -->
   <div class="auth-footer">
+    <!-- Login mode footer -->
     @if (mode === 'login') {
     <span>Don’t have an account?</span>
-    <a routerLink="/auth/register">Sign up</a>
+    <!-- Use routerLink to redirect to "/auth/register" -->
+    <a>Sign up</a>
     <p>admin@devhub.com</p>
     <p>password</p>
     } @else {
+    <!-- Register mode footer -->
     <span>Already have an account?</span>
-    <a routerLink="/auth/login">Login</a>
+    <!-- Use routerLink to redirect to "/auth/login" -->
+    <a >Login</a>
     }
   </div>
 </mat-card>
