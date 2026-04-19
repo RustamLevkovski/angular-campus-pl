@@ -1,50 +1,27 @@
-import { Injectable, inject } from '@angular/core';
-import { Actions, ROOT_EFFECTS_INIT, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
-import { EMPTY } from 'rxjs';
-import { map, switchMap, withLatestFrom, tap } from 'rxjs/operators';
-import { addSection, loadSectionsFromStorage, updateSection, removeSection, SectionEntity } from './sections.actions';
-import { selectAllSections } from './sections.selectors';
+import { Injectable } from '@angular/core';
 
 const STORAGE_KEY = 'angularCampus.sections';
 
 @Injectable()
 export class SectionsEffects {
-  private actions$ = inject(Actions);
-  private store = inject(Store);
+  // Inject stream of dispatched actions.
 
-  loadFromStorage$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ROOT_EFFECTS_INIT),
-      switchMap(() => {
-        try {
-          const raw = localStorage.getItem(STORAGE_KEY);
-          if (!raw) {
-            return EMPTY;
-          }
-          const sections = JSON.parse(raw) as SectionEntity[];
-          return [loadSectionsFromStorage({ sections })];
-        } catch {
-          return EMPTY;
-        }
-      })
-    )
-  );
+  // Inject Store to read current sections when persisting.
 
-  persistSections$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(addSection, updateSection, removeSection, loadSectionsFromStorage),
-        withLatestFrom(this.store.select(selectAllSections)),
-        tap(([, sections]) => {
-          try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(sections));
-          } catch {
-            // ignore storage errors
-          }
-        })
-      ),
-    { dispatch: false }
-  );
+
+  // Load persisted sections from localStorage when effects initialize.
+  // create loadFromStorage$ effect:
+  // - Listen for `ROOT_EFFECTS_INIT`. use ofType.
+  // - Read `STORAGE_KEY` from localStorage and parse JSON.
+  // - Dispatch `loadSectionsFromStorage` when data exists; otherwise return `EMPTY`.
+
+
+  // Persist sections list after every mutation/load action.
+  // create persistSection$:
+  // - Listen to section-changing actions with `ofType(...)`.
+  // - Combine action stream with latest sections using `withLatestFrom`.
+  // - Save serialized sections into localStorage inside `tap`.
+  // - Set `{ dispatch: false }` because this effect performs side effects only.
+
 }
 

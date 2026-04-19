@@ -1,5 +1,4 @@
-import { createReducer, on } from '@ngrx/store';
-import * as AuthActions from './auth.actions';
+
 
 export interface AuthState {
   isAuthenticated: boolean;
@@ -15,14 +14,19 @@ export const initialState: AuthState = {
   loading: false
 };
 
-export const authReducer = createReducer(
-  initialState,
-  on(AuthActions.login, (state) => ({ ...state, loading: true, error: null })),
-  on(AuthActions.loginSuccess, (state, { token }) => ({ 
-    ...state, isAuthenticated: true, token, loading: false 
-  })),
-  on(AuthActions.loginFailure, (state, { error }) => ({ 
-    ...state, isAuthenticated: false, error, loading: false 
-  })),
-  on(AuthActions.logout, () => initialState)
-);
+// Build reducer for auth state transitions.
+// Steps to replicate:
+// - Start from `initialState`.
+// - Use `on(...)` handlers for each auth action.
+// - Always return new objects (immutable updates).
+// export const authReducer = createReducer(
+  
+  // Login request starts loading and clears previous error.
+  // on(),
+  // Login success stores token, marks authenticated, and stops loading.
+  // on(),
+  // Login failure stores error, keeps user unauthenticated, and stops loading.
+  // on(),
+  // Logout resets auth state completely.
+  // on()
+// );

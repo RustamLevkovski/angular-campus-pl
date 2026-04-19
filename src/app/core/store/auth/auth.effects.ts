@@ -1,32 +1,34 @@
-import { inject, Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-
-import { catchError, map, mergeMap, of, tap } from 'rxjs';
-import * as AuthActions from './auth.actions';
-import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { Injectable } from '@angular/core';
 
 @Injectable()
 export class AuthEffects {
-  private actions$ = inject(Actions);
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  // Inject actions.
+  
+  // Inject auth service.
+  
+  // Inject router for side-effect navigation.
+  
 
-  login$ = createEffect(() => this.actions$.pipe(
-    ofType(AuthActions.login),
-    mergeMap(({ email, password }) => this.authService.login(email, password).pipe(
-      map(token => AuthActions.loginSuccess({ token })),
-      catchError(error => of(AuthActions.loginFailure({ error: 'Invalid Credentials' })))
-    ))
-  ));
+  // Create login$ effect
+  // Handle login action by calling AuthService and mapping result to success/failure actions.
+  // Steps to replicate:
+  // - Filter with `ofType(AuthActions.login)`.
+  // - Use `mergeMap` to call `authService.login(...)`.
+  // - Map token to `loginSuccess`, and errors to `loginFailure`.
+  
 
-  loginSuccess$ = createEffect(() => this.actions$.pipe(
-    ofType(AuthActions.loginSuccess),
-    tap(() => this.router.navigate(['/dashboard']))
-  ), { dispatch: false });
-
-  logout$ = createEffect(() => this.actions$.pipe(
-    ofType(AuthActions.logout),
-    tap(() => this.router.navigate(['/login']))
-  ), { dispatch: false });
+  // Create loginSuccess$ effect
+  // Navigate after successful login without dispatching another action.
+  // Steps to replicate:
+  // - Filter for `loginSuccess`.
+  // - Use `tap` for imperative navigation.
+  // - Set `{ dispatch: false }` because this effect does not emit actions.
+  
+  // Create logout$ effect
+  // Navigate user to login screen on logout.
+  // Steps to replicate:
+  // - Filter for `logout`.
+  // - Use `tap` to run router side effect.
+  // - Keep `{ dispatch: false }` for pure side-effect behavior.
+  
 }

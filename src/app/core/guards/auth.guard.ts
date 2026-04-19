@@ -1,20 +1,7 @@
-import { inject } from '@angular/core';
-import { Router, CanActivateFn } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { selectIsAuthenticated } from '../store/auth/auth.selectors';
-import { map, take } from 'rxjs/operators';
 
-export const authGuard: CanActivateFn = (route, state) => {
-  const store = inject(Store);
-  const router = inject(Router);
 
-  return store.select(selectIsAuthenticated).pipe(
-    take(1),
-    map(isAuthenticated => {
-      if (isAuthenticated) {
-        return true;
-      }
-      return router.createUrlTree(['/auth/login']);
-    })
-  );
-};
+
+//Create authGuard, annotate as CanActivateFn. 
+// Use selectIsAuthenticated
+// Inside authGuard inject store and router. 
+

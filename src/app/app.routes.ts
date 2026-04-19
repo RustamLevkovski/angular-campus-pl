@@ -7,8 +7,8 @@ import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.com
 import { RegisterPageComponent } from './pages/register-page/register-page.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { ContentLayoutComponent } from './layouts/content-layout/content-layout.component';
-import { authGuard } from './core/guards/auth.guard';
 
+// Apply AuthGuard for implement canActivate logic
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'auth/login' },
   {
@@ -23,7 +23,6 @@ export const routes: Routes = [
   {
     path: '',
     component: ContentLayoutComponent,
-    canActivate: [authGuard],
     children: [
       { path: 'angular', component: AngularPageComponent },
       { path: 'javascript', component: JsPageComponent },

@@ -5,11 +5,11 @@ import { routes } from './app.routes';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideHttpClient } from '@angular/common/http';
-import { authReducer } from './core/store/auth/auth.reducer';
 import { AuthEffects } from './core/store/auth/auth.effects';
-import { sectionsReducer } from './core/store/sections/sections.reducer';
 import { SectionsEffects } from './core/store/sections/sections.effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
+
+// Uncomment these line
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,12 +17,12 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
     provideAnimationsAsync(), // Required for Material
     provideHttpClient(),
-    provideStore({ auth: authReducer, sections: sectionsReducer }),
-    provideEffects([AuthEffects, SectionsEffects]),
-    provideStoreDevtools({
-      maxAge: 25, // Retains last 25 states
-      logOnly: true, // Restrict extension to log-only mode in production
-    }),
+    // provideStore({ auth: authReducer, sections: sectionsReducer }),
+    // provideEffects([AuthEffects, SectionsEffects]),
+    // provideStoreDevtools({
+   //   maxAge: 25, // Retains last 25 states
+    //  logOnly: true, // Restrict extension to log-only mode in production
+   // }),
 ]
 };
 

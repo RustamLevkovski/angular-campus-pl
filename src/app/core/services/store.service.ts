@@ -1,18 +1,21 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { selectAuthError, selectAuthLoading } from '../store/auth/auth.selectors';
 
 @Injectable({ providedIn: 'root' })
 export class StoreService {
-  constructor(private store: Store) {}
+  // Inject NgRx Store so this service can expose typed read-only selectors to components.
+  // Steps to replicate:
+  constructor() {}
 
-  selectAuthLoading(): Observable<boolean> {
-    return this.store.select(selectAuthLoading);
-  }
+  // Return the current auth loading state as an observable boolean.
+  // - Create a method `selectAuthLoading`
+  // - Call `this.store.select(selectAuthLoading)` to subscribe to that slice.
+  // - Return the observable directly so components can use `| async`.
 
-  selectAuthError(): Observable<unknown> {
-    return this.store.select(selectAuthError);
-  }
+
+
+  // - Create `selectAuthError` method.
+  // - Use `this.store.select(selectAuthError)` to project that value.
+  // - Keep the return type broad (`Observable<unknown>`) if error type can vary.
+
 }
 

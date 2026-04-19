@@ -17,7 +17,6 @@ export class ContentLayoutComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    // Layout level initialization if any.
   }
 
   ngOnDestroy(): void {

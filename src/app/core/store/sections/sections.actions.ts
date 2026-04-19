@@ -7,22 +7,25 @@ export interface SectionEntity {
   content: string;
 }
 
-export const addSection = createAction(
-  '[Sections] Add Section',
-  props<{ section: SectionEntity }>()
-);
+// Dispatch when creating a new section.
+// Create addSection action: '[Sections] Add Section'
+// - Define payload with full `SectionEntity`.
+// - Keep action type string descriptive and scoped by feature.
 
-export const loadSectionsFromStorage = createAction(
-  '[Sections] Load From Storage',
-  props<{ sections: SectionEntity[] }>()
-);
 
-export const updateSection = createAction(
-  '[Sections] Update Section',
-  props<{ section: SectionEntity }>()
-);
+// Dispatch when restoring saved sections from storage.
+// Create loadSectionsFromStorage action: '[Sections] Load From Storage'
+// - Define payload as `SectionEntity[]`.
+// - Dispatch from effect/app initialization after parsing storage.
 
-export const removeSection = createAction(
-  '[Sections] Remove Section',
-  props<{ id: number }>()
-);
+
+// Dispatch when editing an existing section.
+// Create updateSection action: '[Sections] Update Section'
+// - Keep payload as full replacement `SectionEntity`.
+// - Reducer can identify target by id/pageName and replace item immutably.
+
+// Dispatch when deleting a section by identifier.
+// removeSection action: '[Sections] Remove Section' 
+// - Keep payload minimal: only the `id`.
+// - Reducer removes matching item from state list.
+

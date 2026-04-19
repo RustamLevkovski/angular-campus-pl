@@ -1,23 +1,49 @@
-import { Injectable, inject } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Injectable,  } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { addSection, updateSection, removeSection, SectionEntity } from '../store/sections/sections.actions';
-import { selectSectionsForPage } from '../store/sections/sections.selectors';
+import { SectionEntity } from '../store/sections/sections.actions';
+import { Section } from '../../models/section.model';
 
 @Injectable({ providedIn: 'root' })
 export class SectionsService {
-  private store = inject(Store);
+  // Inject Store
+
+  // Remove it
+  private readonly storageKey = 'angularCampus.sections';
+  // Remove it
+  private readonly sections$: BehaviorSubject<Section[]>;
+
   private initializedPages = new Set<string>();
   private lastId = 0;
 
-  constructor() {}
+  // Remove contructor
+  constructor() {
+    const initial = this.safeReadFromStorage();
+    for (const s of initial) {
+      if (s.id > this.lastId) {
+        this.lastId = s.id;
+      }
+    }
+    this.sections$ = new BehaviorSubject<Section[]>(initial);
+  }
 
   addSection(pageName: string, title: string, content: string): void {
     const id = this.generateId();
     const section: SectionEntity = { id, pageName, title, content };
-    this.store.dispatch(addSection({ section }));
+
+    // Replace logic below to store
+    const current = this.sections$.value;
+    const exists = current.some((s) => s.id === section.id);
+    if (exists) {
+      return;
+    }
+    this.setSections([...current, section]);
+
+    // Dispatch add section to the store. 
+
   }
+
+  // remove it
   private generateId(): number {
     const timestamp = Date.now();
     const random = Math.floor(Math.random() * 1000);
@@ -31,15 +57,25 @@ export class SectionsService {
   }
 
   updateSection(section: SectionEntity): void {
-    this.store.dispatch(updateSection({ section }));
+    // Dispatch updateSection event to the store
+
+    this.setSections(
+      this.sections$.value.map((s) =>
+        s.id === section.id && s.pageName === section.pageName ? section : s
+      )
+    );
   }
 
   removeSection(id: number): void {
-    this.store.dispatch(removeSection({ id }));
+    // Dispatch remove section event to the store
+    this.setSections(this.sections$.value.filter((s) => s.id !== id));
   }
 
-  getSectionsForPage(pageName: string): Observable<SectionEntity[]> {
-    return this.store.select(selectSectionsForPage(pageName));
+  // Replace return observable type to SectionEntity
+  getSectionsForPage(pageName: string):  Observable<Section[]> {
+  // Dispatch selectSectionsForPage event to the store
+    return this.sections$.pipe(map((sections) => sections.filter((s) => s.pageName === pageName)));
+
   }
 
   ensureInitialSections(pageName: string, seeds: Omit<SectionEntity, 'id' | 'pageName'>[]): void {
@@ -59,6 +95,33 @@ export class SectionsService {
           }
         });
       });
+  }
+
+  // Remove it
+  private setSections(sections: Section[]): void {
+    this.sections$.next(sections);
+    this.safeWriteToStorage(sections);
+  }
+
+  // Remove it
+  private safeReadFromStorage(): Section[] {
+    try {
+      const raw = localStorage.getItem(this.storageKey);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? (parsed as Section[]) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  // Remove it
+  private safeWriteToStorage(sections: Section[]): void {
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(sections));
+    } catch {
+      // ignore storage errors
+    }
   }
 }
 
